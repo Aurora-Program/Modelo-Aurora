@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aurora-compact"
+version = "0.18.0rc1"
+description = "Compact executable reference kernel for the Aurora model"
+readme = "aurora_compact/README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{name = "Aurora Project"}]
+classifiers = [
+  "Programming Language :: Python :: 3",
+]
+
+[tool.setuptools]
+packages = ["aurora_compact"]
+
+[tool.setuptools.package-data]
+aurora_compact = ["*.md"]

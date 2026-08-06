@@ -1,0 +1,1218 @@
+{
+  "behavioral_probe": {
+    "actions": [
+      "reuse_output"
+    ],
+    "alternatives_preserved": 2,
+    "competition_actions": [
+      "reject",
+      "learn_knowledge"
+    ],
+    "do_route_consumed": [
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "final_output": [
+      1,
+      1,
+      1
+    ],
+    "final_state": "closed",
+    "fractal_levels": [
+      9,
+      3,
+      1
+    ],
+    "fractal_relations": 2,
+    "genesis_action": "learn_knowledge",
+    "genesis_output_equals_input": true,
+    "initial_output": [
+      0,
+      0,
+      0
+    ],
+    "winner_promoted_to": 1
+  },
+  "contextual_reading_probe": {
+    "observations": 24,
+    "probes": [
+      {
+        "evaluated_readings": 1,
+        "expected": [
+          [
+            1,
+            "velar"
+          ]
+        ],
+        "pruned_readings": 1,
+        "selected": [
+          [
+            1,
+            "velar"
+          ]
+        ],
+        "text": " cama",
+        "total_readings": 2,
+        "winners_after": 1,
+        "winners_before": 2
+      },
+      {
+        "evaluated_readings": 1,
+        "expected": [
+          [
+            1,
+            "coronal"
+          ]
+        ],
+        "pruned_readings": 1,
+        "selected": [
+          [
+            1,
+            "coronal"
+          ]
+        ],
+        "text": " cero",
+        "total_readings": 2,
+        "winners_after": 1,
+        "winners_before": 2
+      },
+      {
+        "evaluated_readings": 1,
+        "expected": [
+          [
+            1,
+            "voiced"
+          ]
+        ],
+        "pruned_readings": 1,
+        "selected": [
+          [
+            1,
+            "voiced"
+          ]
+        ],
+        "text": " gana",
+        "total_readings": 2,
+        "winners_after": 1,
+        "winners_before": 2
+      },
+      {
+        "evaluated_readings": 1,
+        "expected": [
+          [
+            1,
+            "fricative"
+          ]
+        ],
+        "pruned_readings": 1,
+        "selected": [
+          [
+            1,
+            "fricative"
+          ]
+        ],
+        "text": " gesto",
+        "total_readings": 2,
+        "winners_after": 1,
+        "winners_before": 2
+      },
+      {
+        "evaluated_readings": 1,
+        "expected": [
+          [
+            3,
+            "vowel"
+          ]
+        ],
+        "pruned_readings": 1,
+        "selected": [
+          [
+            3,
+            "vowel"
+          ]
+        ],
+        "text": " soy ",
+        "total_readings": 2,
+        "winners_after": 1,
+        "winners_before": 2
+      },
+      {
+        "evaluated_readings": 1,
+        "expected": [
+          [
+            1,
+            "consonant"
+          ]
+        ],
+        "pruned_readings": 1,
+        "selected": [
+          [
+            1,
+            "consonant"
+          ]
+        ],
+        "text": " ya ",
+        "total_readings": 2,
+        "winners_after": 1,
+        "winners_before": 2
+      }
+    ],
+    "relations": 18
+  },
+  "directions": {
+    "DEDUCE_B": {
+      "candidate_domain_sizes": {
+        "0": 30,
+        "1": 30,
+        "2": 12,
+        "3": 9
+      },
+      "complete_control_tensors": 15625,
+      "control_coherences": {
+        "AMBIGUOUS": 15625
+      },
+      "control_operations": {
+        "DEDUCE_B": 15625
+      },
+      "control_scopes": {
+        "STOP": 15625
+      },
+      "face_cases": 15625,
+      "face_states": {
+        "closed": 1864,
+        "contradiction": 210,
+        "open": 2371,
+        "transient": 11180
+      },
+      "trigate_cases": 81,
+      "trigate_states": {
+        "ambiguous": 17,
+        "closed": 16,
+        "contradiction": 46,
+        "open": 2
+      },
+      "window_fixed_points": 15625,
+      "window_max_trace": 2,
+      "window_states": {
+        "closed": 1864,
+        "contradiction": 210,
+        "open": 2371,
+        "transient": 11180
+      }
+    },
+    "INFER_R": {
+      "candidate_domain_sizes": {
+        "1": 81
+      },
+      "complete_control_tensors": 15625,
+      "control_coherences": {
+        "AMBIGUOUS": 15625
+      },
+      "control_operations": {
+        "DEDUCE_B": 15625
+      },
+      "control_scopes": {
+        "STOP": 15625
+      },
+      "face_cases": 15625,
+      "face_states": {
+        "closed": 4634,
+        "contradiction": 210,
+        "open": 649,
+        "transient": 10132
+      },
+      "trigate_cases": 81,
+      "trigate_states": {
+        "closed": 28,
+        "contradiction": 40,
+        "open": 13
+      },
+      "window_fixed_points": 15625,
+      "window_max_trace": 2,
+      "window_states": {
+        "closed": 4634,
+        "contradiction": 210,
+        "open": 649,
+        "transient": 10132
+      }
+    },
+    "LEARN_M": {
+      "candidate_domain_sizes": {
+        "0": 30,
+        "1": 30,
+        "2": 12,
+        "3": 9
+      },
+      "complete_control_tensors": 15625,
+      "control_coherences": {
+        "AMBIGUOUS": 15625
+      },
+      "control_operations": {
+        "DEDUCE_B": 15625
+      },
+      "control_scopes": {
+        "STOP": 15625
+      },
+      "face_cases": 15625,
+      "face_states": {
+        "closed": 1864,
+        "contradiction": 210,
+        "open": 2371,
+        "transient": 11180
+      },
+      "trigate_cases": 81,
+      "trigate_states": {
+        "ambiguous": 17,
+        "closed": 16,
+        "contradiction": 46,
+        "open": 2
+      },
+      "window_fixed_points": 15625,
+      "window_max_trace": 2,
+      "window_states": {
+        "closed": 1864,
+        "contradiction": 210,
+        "open": 2371,
+        "transient": 11180
+      }
+    }
+  },
+  "downward_selection_probe": {
+    "all_equivalent_to_exhaustive": true,
+    "probes": [
+      {
+        "closed_positions": [
+          1
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 1,
+        "routes": 1,
+        "text": " cama",
+        "total_readings": 2
+      },
+      {
+        "closed_positions": [
+          1
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 1,
+        "routes": 1,
+        "text": " cero",
+        "total_readings": 2
+      },
+      {
+        "closed_positions": [
+          1
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 1,
+        "routes": 1,
+        "text": " gana",
+        "total_readings": 2
+      },
+      {
+        "closed_positions": [
+          1
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 1,
+        "routes": 1,
+        "text": " gesto",
+        "total_readings": 2
+      },
+      {
+        "closed_positions": [
+          3
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 1,
+        "routes": 1,
+        "text": " soy ",
+        "total_readings": 2
+      },
+      {
+        "closed_positions": [
+          1
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 1,
+        "routes": 2,
+        "text": " ya ",
+        "total_readings": 2
+      },
+      {
+        "closed_positions": [
+          1,
+          6,
+          14
+        ],
+        "equivalent": true,
+        "evaluated_readings": 1,
+        "pruned_readings": 7,
+        "routes": 3,
+        "text": " cama gesto soy ",
+        "total_readings": 8
+      }
+    ]
+  },
+  "fractal_dictionary_probe": {
+    "all_reexecute": true,
+    "feedback": {
+      "observed_programs": 9,
+      "replayed_ds": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "root_equals_recurrent": true,
+      "root_executable": true,
+      "root_leaves": 9,
+      "root_level": 2
+    },
+    "frontier_by_level": [
+      0,
+      0,
+      1
+    ],
+    "levels": [
+      9,
+      3,
+      1
+    ],
+    "mode_routes": {
+      "deduction_o0": {
+        "indices": [
+          0,
+          2
+        ],
+        "output_address": [
+          1,
+          2,
+          1
+        ]
+      },
+      "deduction_o2": {
+        "indices": [
+          2,
+          2
+        ],
+        "output_address": [
+          2,
+          0,
+          2
+        ]
+      },
+      "inference": {
+        "indices": [
+          1,
+          1
+        ],
+        "output_address": [
+          1,
+          2,
+          0
+        ]
+      },
+      "learning": {
+        "indices": [
+          0,
+          0
+        ],
+        "output_address": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    "open_order": {
+      "alternatives": 9,
+      "resolved": false
+    },
+    "runtime_action_table": [],
+    "schema": "aurora-fractal-dictionary-experiment-v1"
+  },
+  "fractal_orientation_probe": {
+    "c_o_chain": {
+      "all_reexecute": true,
+      "incoming": [
+        0,
+        1,
+        0
+      ],
+      "outgoing": [
+        1,
+        0,
+        0
+      ]
+    },
+    "control": {
+      "ds_is_control_triplet": true,
+      "ds_readings": [
+        2,
+        2,
+        2
+      ],
+      "k": [
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          2
+        ]
+      ],
+      "reexecutes": true
+    },
+    "operational_seed": {
+      "c": 1,
+      "k": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "same_instruction": true
+    },
+    "same_unit_three_orientations": {
+      "identity_preserved": true,
+      "incoming": [
+        0,
+        1,
+        2
+      ],
+      "outgoing": [
+        0,
+        1,
+        2
+      ]
+    },
+    "schema": "aurora-fractal-orientation-experiment-v1",
+    "triplet": {
+      "es": 1,
+      "es_is_value_at_o": true,
+      "o": 0,
+      "phase": 2,
+      "value": [
+        1,
+        1,
+        2
+      ]
+    },
+    "vertical": {
+      "es": 1,
+      "selected": [
+        1,
+        1,
+        2
+      ],
+      "upper_o": 1
+    },
+    "window": {
+      "children": 3,
+      "k": [
+        [
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2
+        ]
+      ],
+      "reexecutes": true
+    }
+  },
+  "growth_probe": {
+    "actions": [
+      "carry",
+      "ascend"
+    ],
+    "emerged_source_widths": [
+      5
+    ],
+    "relations": 1,
+    "residual": 0,
+    "states": [
+      "open",
+      "closed"
+    ],
+    "support": [
+      0,
+      1
+    ]
+  },
+  "literal_impossible": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      1,
+      0,
+      2
+    ]
+  ],
+  "parallel_output_face_probe": {
+    "all_found": {
+      "action": "continue",
+      "advance": true,
+      "states": [
+        1,
+        1,
+        1
+      ]
+    },
+    "all_reexecute": true,
+    "one_absent": {
+      "action": "crystallize",
+      "crystallized_index": 2,
+      "frontier_by_level": [
+        1,
+        0,
+        1
+      ],
+      "post_states": [
+        1,
+        1,
+        1
+      ],
+      "read_back": 1,
+      "states": [
+        1,
+        1,
+        0
+      ]
+    },
+    "open": {
+      "action": "open",
+      "alternatives": 9,
+      "dictionary_unchanged": true,
+      "states": [
+        1,
+        1,
+        2
+      ]
+    },
+    "runtime_action_table": [],
+    "schema": "aurora-output-face-experiment-v1",
+    "two_absent": {
+      "action": "return",
+      "advance": false,
+      "dictionary_unchanged": true,
+      "returned": 3,
+      "states": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  "profile": "aurora-compact-0.18.0rc1",
+  "provenance_program_probe": {
+    "all_reexecute": true,
+    "distinct_causal_window": {
+      "inductions": 0
+    },
+    "incompatible_window": {
+      "emergent_ds_address": [
+        1,
+        0,
+        2
+      ],
+      "emergent_executable": false,
+      "hypotheses_preserved": 3
+    },
+    "runtime_action_table": [],
+    "same_causal_window": {
+      "candidate_programs_authored_by_runtime": false,
+      "candidate_values": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ]
+      ],
+      "emergent_equals_recurrent": true,
+      "emergent_executable": true,
+      "executed_ds": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "experiences": 3,
+      "reflected_program_atoms": 9
+    },
+    "schema": "aurora-provenance-program-experiment-v1",
+    "serialization": {
+      "education_round_trip": true,
+      "program_round_trip": true
+    }
+  },
+  "release_candidate_probe": {
+    "emergent_unit": {
+      "children": 3,
+      "k": [
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          0
+        ],
+        [
+          2,
+          0,
+          2
+        ]
+      ],
+      "reexecutes": true
+    },
+    "promotion": {
+      "levels": [
+        0,
+        0,
+        1
+      ],
+      "root_leaves": 9,
+      "root_level": 2,
+      "root_reexecutes": true,
+      "same_root": true,
+      "three_index_states": [
+        1,
+        1,
+        1
+      ]
+    },
+    "schema": "aurora-release-candidate-experiment-v1",
+    "three_index_dictionary": {
+      "channels": [
+        "DO",
+        "DE",
+        "DS"
+      ],
+      "full_k": [
+        [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            2
+          ]
+        ],
+        [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            2
+          ]
+        ],
+        [
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            2
+          ]
+        ]
+      ],
+      "outgoing_o": [
+        2,
+        1,
+        0
+      ],
+      "same_identity": true,
+      "states": [
+        1,
+        1,
+        1
+      ],
+      "stored_nodes": 1
+    },
+    "triplet_passage": {
+      "open_destinations": 2,
+      "open_orientations": [
+        2,
+        0,
+        1
+      ],
+      "resolved_orientations": [
+        0
+      ]
+    },
+    "version": "0.18.0rc1",
+    "window_boundary": {
+      "current_selected": true,
+      "destinations": [
+        [
+          {
+            "cell": [
+              0,
+              1,
+              0
+            ],
+            "scale": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "cell": [
+              0,
+              1,
+              0
+            ],
+            "scale": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        [
+          {
+            "cell": [
+              0,
+              1,
+              0
+            ],
+            "scale": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        [
+          {
+            "cell": [
+              0,
+              1,
+              0
+            ],
+            "scale": [
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      ],
+      "incoming_c": [
+        0,
+        1,
+        2
+      ],
+      "next_c": [
+        2,
+        1,
+        0
+      ],
+      "open_preserves_both": true,
+      "outgoing_o": [
+        2,
+        1,
+        0
+      ],
+      "same_identity": true,
+      "upper_selected": true
+    }
+  },
+  "segmentation_probe": {
+    "compatible_hypotheses": 19,
+    "distinct_relations": 3,
+    "overlapping_candidates": 7,
+    "selected_spans": [
+      [
+        0,
+        3
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        6,
+        9
+      ]
+    ],
+    "selected_support": [
+      3,
+      3,
+      3
+    ],
+    "winners": 1
+  },
+  "sequential_probe": {
+    "blocks": [
+      {
+        "dictionary_size_end": 24,
+        "lexicalized": 38,
+        "mean_logical_cost": 2.14,
+        "new_relations": 24,
+        "range": "0-50",
+        "rejections": 21
+      },
+      {
+        "dictionary_size_end": 24,
+        "lexicalized": 50,
+        "mean_logical_cost": 1,
+        "new_relations": 0,
+        "range": "100-150",
+        "rejections": 0
+      },
+      {
+        "dictionary_size_end": 24,
+        "lexicalized": 50,
+        "mean_logical_cost": 1,
+        "new_relations": 0,
+        "range": "250-300",
+        "rejections": 0
+      },
+      {
+        "dictionary_size_end": 48,
+        "lexicalized": 38,
+        "mean_logical_cost": 3.74,
+        "new_relations": 24,
+        "range": "300-350",
+        "rejections": 101
+      },
+      {
+        "dictionary_size_end": 48,
+        "lexicalized": 50,
+        "mean_logical_cost": 1,
+        "new_relations": 0,
+        "range": "550-600",
+        "rejections": 0
+      }
+    ],
+    "distribution_shift_at": 300,
+    "final_dictionary_size": 48,
+    "genesis_control_after_one_pass": {
+      "DEDUCE_B/AMBIGUOUS/STOP": 11,
+      "DEDUCE_B/COHERENT/STOP": 12,
+      "blocked": 2
+    },
+    "lexicalized_sequences": 576,
+    "literal_boundary_probe": {
+      "blocked": 60,
+      "faces": 3456,
+      "values": {
+        "012": 54,
+        "102": 6
+      }
+    },
+    "profile": "aurora-compact-0.6-experiment",
+    "sequences": 600,
+    "tokens_per_sequence": 9,
+    "total_new_relations": 48,
+    "total_rejections": 122,
+    "total_reuses": 48,
+    "vocabulary": 24
+  },
+  "tensor_program_probe": {
+    "all_reexecute": true,
+    "code_triplets": 9,
+    "deduction_instruction": {
+      "de": [
+        1,
+        1,
+        1
+      ],
+      "direction": "DEDUCE_B",
+      "ds": [
+        2,
+        2,
+        2
+      ],
+      "executable": true
+    },
+    "incompatible_induction": {
+      "emergent_ds_address": [
+        1,
+        0,
+        2
+      ],
+      "emergent_executable": false,
+      "hypotheses_preserved": 3
+    },
+    "recurrent_induction": {
+      "emergent_ds_address": [
+        1,
+        1,
+        1
+      ],
+      "emergent_equals_recurrent": true,
+      "emergent_executable": true,
+      "executed_ds": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "hypotheses_preserved": 3,
+      "uses_external_score": false
+    },
+    "runtime_action_table": [],
+    "schema": "aurora-tensor-program-experiment-v1"
+  },
+  "training_probe": {
+    "all_relations_reexecute": true,
+    "observations": 1,
+    "relations": 6,
+    "selected_forms": [
+      "una"
+    ],
+    "winners_after": 1,
+    "winners_before": 2
+  },
+  "triplets_processible": 25,
+  "triplets_total": 27,
+  "universal_relational_probe": {
+    "all_reexecute": true,
+    "open_then_close": {
+      "firings": 2,
+      "first_de": [
+        2,
+        2,
+        2
+      ],
+      "fixed_point": true,
+      "second_de": [
+        1,
+        1,
+        1
+      ],
+      "second_ds": [
+        0,
+        0,
+        0
+      ]
+    },
+    "runtime_actions": [],
+    "vertical": {
+      "firings": 4,
+      "fixed_point": true,
+      "root_de": [
+        1,
+        1,
+        1
+      ],
+      "root_depth": 2,
+      "root_ds": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

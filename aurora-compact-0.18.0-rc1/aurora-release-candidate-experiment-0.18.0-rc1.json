@@ -1,0 +1,201 @@
+{
+  "emergent_unit": {
+    "children": 3,
+    "k": [
+      [
+        2,
+        1,
+        0
+      ],
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        2
+      ]
+    ],
+    "reexecutes": true
+  },
+  "promotion": {
+    "levels": [
+      0,
+      0,
+      1
+    ],
+    "root_leaves": 9,
+    "root_level": 2,
+    "root_reexecutes": true,
+    "same_root": true,
+    "three_index_states": [
+      1,
+      1,
+      1
+    ]
+  },
+  "schema": "aurora-release-candidate-experiment-v1",
+  "three_index_dictionary": {
+    "channels": [
+      "DO",
+      "DE",
+      "DS"
+    ],
+    "full_k": [
+      [
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          0
+        ],
+        [
+          2,
+          0,
+          2
+        ]
+      ],
+      [
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          0
+        ],
+        [
+          2,
+          0,
+          2
+        ]
+      ],
+      [
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          0
+        ],
+        [
+          2,
+          0,
+          2
+        ]
+      ]
+    ],
+    "outgoing_o": [
+      2,
+      1,
+      0
+    ],
+    "same_identity": true,
+    "states": [
+      1,
+      1,
+      1
+    ],
+    "stored_nodes": 1
+  },
+  "triplet_passage": {
+    "open_destinations": 2,
+    "open_orientations": [
+      2,
+      0,
+      1
+    ],
+    "resolved_orientations": [
+      0
+    ]
+  },
+  "version": "0.18.0rc1",
+  "window_boundary": {
+    "current_selected": true,
+    "destinations": [
+      [
+        {
+          "cell": [
+            0,
+            1,
+            0
+          ],
+          "scale": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "cell": [
+            0,
+            1,
+            0
+          ],
+          "scale": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      [
+        {
+          "cell": [
+            0,
+            1,
+            0
+          ],
+          "scale": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      [
+        {
+          "cell": [
+            0,
+            1,
+            0
+          ],
+          "scale": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    ],
+    "incoming_c": [
+      0,
+      1,
+      2
+    ],
+    "next_c": [
+      2,
+      1,
+      0
+    ],
+    "open_preserves_both": true,
+    "outgoing_o": [
+      2,
+      1,
+      0
+    ],
+    "same_identity": true,
+    "upper_selected": true
+  }
+}
