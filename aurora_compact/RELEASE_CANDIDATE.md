@@ -1,8 +1,8 @@
-# Aurora compacto 0.18.0-rc1
+# Aurora compacto 0.18.0-rc2
 
 ## Contrato candidato
 
-Aurora 0.18.0-rc1 congela una única ley de orientación para la tripleta, la
+Aurora 0.18.0-rc2 congela una única ley de orientación para la tripleta, la
 semilla operativa, el tensor, el diccionario, la ventana y el control:
 
 ```text
@@ -51,43 +51,53 @@ ninguna, es `0`. Si conserva varias candidatas compatibles, es `2` y ninguna se
 elimina. La búsqueda exacta sigue realizándose mediante deducción ternaria, no
 mediante una igualdad especial del diccionario.
 
-## Emergencia y carry son la misma unidad
+## Emergencia y carry conservan la misma clase de unidad
 
-El candidato elimina la decisión `DE → movimiento`. `DE` conserva evidencia de
-cierre, pero no convierte el resultado en otra clase de objeto.
+El candidato no crea un tipo reducido para el carry. Tanto lo que asciende
+como lo que continúa es siempre una `Unit(K)` completa, con orientación,
+conocimiento, información y procedencia reejecutable.
 
-La ventana contiene tres puertos tensoriales indexados por `O`. La conexión
-seleccionada determina dónde se vuelve a presentar la misma unidad:
+`DE` tampoco se interpreta de forma aislada. Igual que en el TriGate, primero
+se observa el resultado: si `R=2`, la relación permanece abierta aunque `E`
+conserve un residual `0` o `1`. Solo una relación cuyo resultado ha dejado de
+ser el tensor abierto puede cerrar o contradecirse.
+
+## La ventana como TriGate tensorial
+
+La corrección de `rc2` es que la ventana no agrupa tres tensores ya cerrados.
+Replica la forma de la relación mínima y abre el lugar del resultado:
 
 ```text
-conexión al nivel actual   → observamos carry
-conexión al nivel superior → observamos emergencia
-orientación abierta        → se conservan ambos destinos
+W = (A, B, 2₀)
+2₀ = K(222,222,222)
 ```
 
-El runtime no contiene acciones denominadas `ASCEND`, `CARRY`, `SHIFT` o
-`CRYSTALLIZE`. Solo conserva una topología de tres puertos y entrega el mismo
-`Unit(K)` al puerto seleccionado. Carry y emergencia son nombres del recorrido
-observado, no formatos de datos ni operaciones fundamentales diferentes.
+La cara ordinaria opera `A` y `B` sobre la posición abierta y hace evolucionar
+el tensor `2₀` hasta `2ₑ`. Esa unidad conserva `(A,B,2₀)` como procedencia.
+Después solo existen tres transiciones:
 
-## La ventana como frontera de escala
+| Resultado | Nivel superior | Siguiente ventana |
+|---|---|---|
+| relación coherente | emergencia `U(A,B,2ₑ)` | comienza desde los siguientes tensores |
+| `2ₑ` ambiguo o abierto | — | `(2ₑ, siguiente, 2₀)` |
+| relación incoherente | `A` | `(B, siguiente, 2₀)` |
 
-Los TriGates producen paquetes `(R,E,O)`. Tres paquetes proyectan
-`K=(DO,DE,DS)`. Tres unidades producen otra unidad mediante la misma cara.
-Ninguno de esos pasos decide todavía si existe movimiento horizontal o
-vertical.
+El `2₀` de cada siguiente ventana es una unidad nueva. Por eso una continuación
+consume exactamente un tensor nuevo, no dos. El carry conserva todo `K`: en
+la apertura es el propio `2ₑ`; en la contradicción es `B`. En la coherencia no
+asciende `2ₑ` aisladamente, sino la nueva unidad que emerge de la relación
+completa `(A,B,2ₑ)`. En la incoherencia `A` puede ascender individualmente
+porque ya constituye la unidad coherente que precede a la composición fallida.
+La coherencia exige a la vez cierre relacional y un `2ₑ` ordenable. Una salida
+como `012` o `102` no puede emerger aunque `DE` aporte un voto positivo, porque
+no admite una orientación no autorreferente.
+El `DO` de la unidad retenida se convierte en la fase de la siguiente ventana;
+no se reutiliza la orientación del intento que acaba de terminar.
 
-La ventana es el último paso de la escala:
-
-1. recibe tres unidades completas;
-2. aplica la cara ordinaria;
-3. obtiene otra `Unit(K)` causal y reejecutable;
-4. lee `O=DO[C]`;
-5. la presenta en la conexión seleccionada;
-6. esa orientación entra como `C` de la siguiente relación.
-
-Así, una tripleta, una SO, un tensor, una ventana y un control no imitan la
-misma lógica: son presentaciones de la misma operación en escalas diferentes.
+La ventana es así el último paso de una escala. Lo que asciende puede ocupar
+`A` o `B` de otra ventana superior; lo que permanece abierto ocupa `A` de la
+siguiente ventana del mismo nivel. En ambos casos su `O` entra sin traducción
+como `C` de la relación que lo recibe.
 
 ## Apertura ternaria
 
@@ -151,10 +161,20 @@ propiedades:
 6. el crecimiento `1–3–9` usa la misma síntesis y conserva procedencia;
 7. el núcleo candidato no despacha acciones semánticas externas;
 8. la auditoría finita y la suite de regresión completa permanecen estables.
+9. toda ventana nueva tiene exactamente la forma `(A,B,2₀)`;
+10. apertura y contradicción consumen un solo tensor siguiente y abren un
+    tensor `2₀` nuevo;
+11. `R=2` prevalece sobre los residuales de `E` y nunca se descarta como una
+    falsa contradicción.
+12. `2ₑ` y la emergencia superior son identidades distintas: el primero solo
+    continúa cuando permanece ambiguo; la segunda existe únicamente cuando
+    la relación `(A,B,2ₑ)` cierra.
+13. una salida determinada pero no ordenable, incluidas `012` y `102`, se considera
+    incoherente y nunca se fuerza a emerger por un voto aislado de `DE`.
 
 La hipótesis congelada puede resumirse así:
 
-> Toda operación produce un tensor completo. La orientación decide desde qué
-> canal se consulta y en qué conexión vuelve a presentarse. Carry, emergencia,
-> conocimiento, información e instrucción son funciones contextuales de la
-> misma unidad fractal.
+> Toda ventana hace evolucionar una unidad abierta mediante `A` y `B`. Si la
+> relación cierra, emerge como unidad superior la composición completa; si
+> permanece ambigua, continúa la unidad abierta evolucionada; y si resulta
+> incoherente, emerge `A` mientras `B` conserva la continuidad.

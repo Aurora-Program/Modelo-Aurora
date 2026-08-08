@@ -1,4 +1,4 @@
-# Perfil ejecutable Aurora 0.18.0-rc1
+# Perfil ejecutable Aurora 0.18.0-rc2
 
 Este perfil conserva la separación 0.12 entre el núcleo universal y los
 comportamientos que deben llegar mediante educación. Ante una diferencia con
@@ -28,7 +28,9 @@ La convención canónica de esta rama es `0=aprender M`, `1=inferir R` y
 `2=deducir B`. Cualquier tabla anterior que intercambie `0` y `2` queda
 obsoleta. La lógica del TriGate, la ordenación y la cara permanece congelada;
 0.17 completó la identidad del carry y la proyección superior del control;
-0.18.0-rc1 congela el paso por conexiones orientadas y los tres índices de `K`.
+0.18.0-rc1 congeló el paso por conexiones orientadas y los tres índices de
+`K`. 0.18.0-rc2 corrige la ventana para que replique la relación mínima con
+dos operandos y una posición de resultado abierta.
 
 ## Ejecutor relacional universal
 
@@ -194,20 +196,48 @@ y produce raíces consultables desde `DO`, `DE` y `DS`.
 `SHIFT`, `CRYSTALLIZE`, `RETURN` o `OPEN`. Esas etiquetas permanecen únicamente
 en prototipos históricos y pruebas de comportamiento.
 
+## Ventana autosimilar corregida 0.18.0-rc2
+
+67. La ventana canónica no recibe tres tensores ya determinados. Recibe dos
+operandos y abre una unidad completa para el resultado:
+`W=(A,B,2₀)`, donde `2₀` es `K=(222,222,222)`.
+68. La cara ordinaria hace evolucionar `2₀` desde `(A,B,2₀)` hasta `2ₑ`, que
+conserva exactamente `A`, `B` y la unidad abierta inicial como procedencia.
+69. Si `2ₑ` está abierto, la lectura de `R` prevalece sobre cualquier residual
+de `E`: asciende nada y el `K` completo de `2ₑ` continúa como carry. La
+siguiente ventana es `(2ₑ,siguiente,2₀)` y contiene un tensor abierto nuevo.
+70. Si la relación es coherente, no asciende `2ₑ` aisladamente. Emerge una
+unidad superior nueva `U(A,B,2ₑ)`, reejecutable desde esos tres descendientes.
+71. Si la relación determinada es incoherente, asciende `A`, se conserva `B`
+como carry y la siguiente ventana es `(B,siguiente,2₀)`.
+72. Toda continuación consume un solo tensor nuevo. Las ventanas históricas
+`(carry,siguiente,siguiente)` dejan de ser canónicas porque ocupaban con datos
+el lugar que corresponde al resultado abierto.
+73. `R=2` no se clasifica por `E` como contradicción. Igual que en el TriGate,
+los trits de `E` pueden conservar residuales mientras la relación permanece
+abierta. La unidad retenida entrega su `DO` como fase de la siguiente ventana,
+por lo que la continuación cumple literalmente `O[t]→C[t+1]`.
+74. `2ₑ` y `U(A,B,2ₑ)` son unidades distintas. La primera representa el estado
+evolucionado de la apertura; la segunda representa la relación que ya ha
+adquirido unidad propia y puede ocupar el nivel superior.
+75. El cierre superior exige simultáneamente coherencia relacional y una salida
+ordenable. `DS=012` y `DS=102` son incoherentes en esta frontera aunque la
+mayoría de `DE` sea `1`, porque no admiten una orientación válida.
+
 ## Estado de los prototipos 0.7–0.11
 
-67. `growth.py` y `training.py` se conservan como oráculos experimentales.
+76. `growth.py` y `training.py` se conservan como oráculos experimentales.
     Demuestran cierre, extensión, recurrencia, competencia y selección
     contextual, pero programan explícitamente parte de esos comportamientos.
-68. Sus resultados no se consideran ya semántica definitiva del runtime. Una
+77. Sus resultados no se consideran ya semántica definitiva del runtime. Una
     conducta solo migrará al ejecutor universal cuando pueda expresarse con
     semillas, tensores, conexiones y reejecución.
-69. El perfil 0.12 migró dos conductas: la realimentación abierta con los dos
+78. El perfil 0.12 migró dos conductas: la realimentación abierta con los dos
     elementos siguientes y el crecimiento `9→3→1`. Ambas usan exactamente el
     mismo bucle relacional.
-70. El perfil 0.13 migró la presentación completa a un tensor y probó la
+79. El perfil 0.13 migró la presentación completa a un tensor y probó la
     síntesis ternaria de programas competidores.
-71. El perfil 0.14 hace que la experiencia causal refleje y presente esos
+80. El perfil 0.14 hace que la experiencia causal refleje y presente esos
     programas sin una lista de candidatos escrita por el anfitrión. Derivar
     direcciones nunca observadas y realimentar continuamente el programa
     emergente permanecían como fronteras abiertas. El perfil 0.15 incorpora la
@@ -215,7 +245,9 @@ en prototipos históricos y pruebas de comportamiento.
     una familia operativa. El perfil 0.16 incorpora la búsqueda paralela y la
     escritura conservadora de la única salida ausente. El perfil 0.17 convierte
     carry y control en unidades `K` completas y verifica el enlace `O→C` desde
-    la tripleta hasta el control.
+    la tripleta hasta el control. El perfil 0.18.0-rc1 unifica los tres índices
+    y el paso orientado; 0.18.0-rc2 sustituye su frontera provisional de tres
+    entradas determinadas por la ventana `(A,B,2₀)`.
 
 El release candidate no declara congelada una ruta Fibonacci ternaria, un
 protocolo físico P2P ni una correspondencia automática entre cierre y

@@ -17,7 +17,7 @@ from . import (
     training,
 )
 
-__version__ = "0.18.0rc1"
+__version__ = "0.18.0rc2"
 
 __all__ = [
     "aurora",

@@ -1,4 +1,4 @@
-# Aurora compacto 0.18.0-rc1
+# Aurora compacto 0.18.0-rc2
 
 Release candidate de la arquitectura Aurora cerrada el 6 de agosto de 2026.
 El paquete convierte las reglas ternarias en objetos auditables, conserva la
@@ -12,11 +12,11 @@ C → leer K[C] → O=DO[C] → conexión[O] → C siguiente
 ```
 
 El diccionario guarda un único `K=(DO,DE,DS)` y permite recuperarlo desde sus
-tres canales. La ventana entrega esa misma unidad a la conexión seleccionada
-por `O`: si la conexión pertenece al nivel actual observamos carry; si
-pertenece al nivel superior observamos emergencia; si la orientación permanece
-abierta se conservan ambos destinos. El núcleo RC no decide el movimiento a
-partir de `DE` ni usa clases de acción semántica. Véase
+tres canales. La ventana replica ahora la relación mínima como `(A,B,2₀)`: el
+tercer lugar es una unidad completa abierta que evoluciona hasta `2ₑ`. Si la
+relación cierra, asciende `U(A,B,2ₑ)`; si permanece ambigua, `2ₑ` continúa en
+`(2ₑ,siguiente,2₀)`; y ante incoherencia asciende `A` mientras `B` continúa en
+`(B,siguiente,2₀)`. Véase
 `RELEASE_CANDIDATE.md`.
 
 El candidato continúa la rama del ejecutor relacional que no conoce
@@ -35,9 +35,9 @@ devuelve las salidas cuando dos rutas no encuentran conocimiento.
 determina `ES`; entre niveles, la orientación emitida puede entrar sin
 traducción como `C`; una ventana abierta conserva el `K` completo y el control
 vuelve a proyectarse como una unidad ordinaria `(DO,DE,DS)`. Véase
-`ORIENTATION.md`. 0.18.0-rc1 completa ese paso: `C` selecciona uno de los tres
-canales del mismo `K`, `O=DO[C]` selecciona una conexión y la ventana actúa
-únicamente como frontera entre escalas.
+`ORIENTATION.md`. 0.18.0-rc1 completó los tres índices y el paso orientado.
+0.18.0-rc2 corrige la frontera: no agrupa tres entradas determinadas, sino dos
+operandos y un resultado tensorial abierto.
 
 ## Núcleo release candidate
 
@@ -45,10 +45,12 @@ canales del mismo `K`, `O=DO[C]` selecciona una conexión y la ventana actúa
 
 - `FractalTensorDictionary` promueve unidades `1–3–9` y recupera la misma
   identidad desde `DO`, `DE` o `DS`;
-- `FractalTopology` conserva tres puertos tensoriales sin interpretar su
-  significado;
-- `FractalWindow` sintetiza una unidad y la presenta intacta al puerto elegido
-  por `O`;
+- `FractalTopology` y `OrientedBoundary` conservan la comprobación de paso
+  `C→O` de rc1;
+- `FractalWindow` opera exactamente `(A,B,2₀)`, conserva el tensor abierto
+  evolucionado `2ₑ` y lo distingue de la emergencia superior;
+- `resolve_level()` aplica cierre, apertura e incoherencia consumiendo un solo
+  tensor nuevo en cada continuación;
 - `UnitPassage.next_c` es literalmente la orientación saliente;
 - `pass_triplet()` usa el mismo `O` que determina `ES` y conserva todas las
   orientaciones de una tripleta todavía abierta.
@@ -189,7 +191,7 @@ TriGate empleada por el diccionario.
 contiene un silabificador ni una tabla de combinaciones permitidas. Cada
 intento vuelve a ejecutar `synthesize()` sobre tres unidades del mismo nivel y
 deja que `DE` determine el movimiento. Esta fue la hipótesis experimental de
-0.7 y no forma parte del contrato 0.18.0-rc1:
+0.7 y no forma parte del contrato 0.18.0-rc2:
 
 | Estado de `DE` | Movimiento | Consecuencia |
 |---|---|---|
@@ -203,6 +205,9 @@ Una secuencia abierta continúa exactamente así:
 (x1, x2, x3) -> carry
 (carry, x4, x5) -> nuevo intento
 ```
+
+Ese flujo queda conservado solo como regresión histórica. La ventana canónica
+de rc2 continúa como `(carry,x4,2)`.
 
 Tres cierres vuelven a ocupar las posiciones de una ventana superior. El
 runtime repite la misma operación hasta obtener una raíz o llegar a una
@@ -469,10 +474,11 @@ python -m aurora_compact.fractal_dictionary_experiment
 python -m aurora_compact.output_face_experiment
 python -m aurora_compact.orientation_experiment
 python -m aurora_compact.release_candidate_experiment
+python -m aurora_compact.window_experiment
 python -m aurora_compact.audit
 ```
 
-El candidato contiene 143 pruebas y mantiene el experimento reproducible de
+El candidato contiene 151 pruebas y mantiene el experimento reproducible de
 600 secuencias. La auditoría enumera las 243 configuraciones dirigidas del
 TriGate y 46.875 caras, ventanas y controles en total: 15.625 por dirección.
 
@@ -529,6 +535,13 @@ tripleta satisface `ES=P[O]`; la SO y el tensor-programa comparten exactamente
 la misma instrucción `K`; el carry conserva esa unidad completa y sus tres
 progenitores; y `HDS/HDE/HDO` se proyectan de nuevo como `Kcontrol`. El mismo
 objeto puede presentarse desde `0`, `1` y `2` sin ser reconstruido.
+
+La versión 0.18.0-rc2 corrige la ventana final. Cada intento contiene
+`(A,B,2₀)`; la posición `2₀` es una unidad `K=(222,222,222)` nueva que
+evoluciona hasta `2ₑ`. Si la relación cierra, asciende la emergencia completa
+`U(A,B,2ₑ)`; si permanece abierta, continúa `2ₑ` con un tensor `2₀` nuevo; y
+si la relación es incoherente, asciende `A` mientras `B` continúa. La lectura
+de `R=2` precede a `E`, evitando clasificar un residual como contradicción.
 
 ## Frontera del release candidate
 

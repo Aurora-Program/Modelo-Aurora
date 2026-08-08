@@ -78,7 +78,7 @@ class FractalPassageTests(unittest.TestCase):
     def test_orientation_alone_selects_same_upper_or_open_destination(self):
         unit = emergent_unit()
         self.assertEqual(unit.state.do, (2, 1, 0))
-        window = fractal_kernel.FractalWindow(TOPOLOGY)
+        window = fractal_kernel.OrientedBoundary(TOPOLOGY)
 
         open_passage = window.pass_unit(unit, aurora.Direction.LEARN_M)
         upper_passage = window.pass_unit(unit, aurora.Direction.INFER_R)
@@ -101,7 +101,7 @@ class FractalPassageTests(unittest.TestCase):
     def test_de_does_not_change_the_selected_connection(self):
         first = aurora.Unit(aurora.Knowledge((0, 1, 2), (1, 1, 1), (0, 0, 0)))
         second = aurora.Unit(aurora.Knowledge((0, 1, 2), (0, 0, 0), (1, 1, 1)))
-        window = fractal_kernel.FractalWindow(TOPOLOGY)
+        window = fractal_kernel.OrientedBoundary(TOPOLOGY)
         for incoming in aurora.Direction:
             left = window.pass_unit(first, incoming)
             right = window.pass_unit(second, incoming)
@@ -110,7 +110,7 @@ class FractalPassageTests(unittest.TestCase):
 
     def test_window_is_the_boundary_and_preserves_the_emergent_unit(self):
         children = tuple(aurora.Unit.leaf(value) for value in CHILDREN)
-        window = fractal_kernel.FractalWindow(TOPOLOGY)
+        window = fractal_kernel.OrientedBoundary(TOPOLOGY)
         passage = window.resolve(children, aurora.Direction.LEARN_M)
         expected = aurora.synthesize(children, aurora.Direction.LEARN_M)
         self.assertEqual(passage.unit, expected)

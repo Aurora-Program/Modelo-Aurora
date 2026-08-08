@@ -1,0 +1,130 @@
+{
+  "closed": {
+    "carry": null,
+    "emergent": [
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "emergent_children": [
+      "A",
+      "B",
+      "2e"
+    ],
+    "emergent_reexecutes": true,
+    "evolved_2": [
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "evolved_reexecutes": true,
+    "state": "closed",
+    "superior": "U(A,B,2e)"
+  },
+  "contradiction": {
+    "carry": "B",
+    "evolved_2": [
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        1
+      ],
+      [
+        2,
+        2,
+        0
+      ]
+    ],
+    "evolved_reexecutes": true,
+    "new_tensor_2": true,
+    "next_window": [
+      "B",
+      "next",
+      "2_0"
+    ],
+    "state": "contradiction",
+    "superior": "A"
+  },
+  "open": {
+    "carry": "2e",
+    "evolved_2": [
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "evolved_reexecutes": true,
+    "new_tensor_2": true,
+    "next_window": [
+      "2e",
+      "next",
+      "2_0"
+    ],
+    "state": "open",
+    "superior": null
+  },
+  "schema": "aurora-tensor-window-experiment-v3",
+  "tensor_2": [
+    [
+      2,
+      2,
+      2
+    ],
+    [
+      2,
+      2,
+      2
+    ],
+    [
+      2,
+      2,
+      2
+    ]
+  ],
+  "version": "0.18.0rc2",
+  "window": [
+    "A",
+    "B",
+    "2_0"
+  ]
+}

@@ -143,8 +143,13 @@ class UnitPassage:
 
 
 @dataclass(frozen=True)
-class FractalWindow:
-    """The scale boundary that presents one complete unit through ``C-O``."""
+class OrientedBoundary:
+    """The rc1 scale boundary that presents one complete unit through ``C-O``.
+
+    ``FractalWindow`` below supersedes this three-closed-input prototype.  The
+    boundary remains available because its identity-preserving ``C -> O``
+    passage is still a useful primitive and an rc1 regression.
+    """
 
     topology: FractalTopology
     phase: aurora.Triplet = aurora.OPEN
@@ -176,6 +181,219 @@ class FractalWindow:
         incoming = aurora.Direction(incoming)
         unit = aurora.synthesize(children, incoming, self.phase)
         return self.pass_unit(unit, incoming)
+
+
+def open_unit() -> aurora.Unit:
+    """Return a fresh complete tensor ``2``: ``K=(222,222,222)``."""
+
+    return aurora.Unit(aurora.EMPTY_KNOWLEDGE)
+
+
+@dataclass(frozen=True)
+class FractalWindow:
+    """One TriGate-shaped tensor window ``(A, B, 2)``.
+
+    ``A`` and ``B`` are the two available tensors.  ``result`` is a fresh
+    complete open tensor and occupies the result position that the ordinary
+    Aurora face must evolve.  The evolved result may continue as carry.  It
+    is not the superior unit: on closure a second application of the same
+    face makes the complete relation ``(A,B,result_evolved)`` emerge.
+    """
+
+    a: aurora.Unit
+    b: aurora.Unit
+    result: aurora.Unit
+    phase: aurora.Triplet = aurora.OPEN
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "phase", aurora.triplet(self.phase))
+        if not all(aurora.reexecute(unit) for unit in (self.a, self.b, self.result)):
+            raise aurora.AuroraError("every tensor-window slot must re-execute")
+        if self.result.state != aurora.EMPTY_KNOWLEDGE or self.result.children:
+            raise aurora.AuroraError(
+                "the result position of a new tensor window must be a leaf tensor 2"
+            )
+
+    @classmethod
+    def open(
+        cls,
+        a: aurora.Unit,
+        b: aurora.Unit,
+        phase: Sequence[aurora.Trit] = aurora.OPEN,
+    ) -> FractalWindow:
+        """Open a new result position for two tensors at the same scale."""
+
+        return cls(a, b, open_unit(), aurora.triplet(phase))
+
+    @property
+    def slots(self) -> tuple[aurora.Unit, aurora.Unit, aurora.Unit]:
+        return self.a, self.b, self.result
+
+    def deduce(self) -> WindowResolution:
+        """Evolve tensor ``2`` and apply the three autosimilar outcomes."""
+
+        evolved = aurora.synthesize(
+            self.slots,
+            aurora.Direction.INFER_R,
+            self.phase,
+        )
+        closure = aurora.majority3(*evolved.state.de)
+
+        # At every scale R=2 remains open.  Its E trits retain residual
+        # information and therefore must not be mistaken for contradiction.
+        if evolved.value == aurora.OPEN:
+            state = aurora.RelationState.OPEN
+        elif not aurora.order_triplet(evolved.value).valid:
+            # A determined but non-orderable result (such as 012 or 102) cannot
+            # become a superior tensor even if DE carries a positive vote.
+            state = aurora.RelationState.CONTRADICTION
+        elif closure == 1:
+            state = aurora.RelationState.CLOSED
+        elif closure == 0:
+            state = aurora.RelationState.CONTRADICTION
+        else:
+            state = aurora.RelationState.OPEN
+
+        emergent = None
+        if state is aurora.RelationState.CLOSED:
+            # The evolved tensor is the completed third position.  The unit
+            # promoted above is the relation of A, B and that completed
+            # position, not the completed position by itself.
+            emergent = aurora.synthesize(
+                (self.a, self.b, evolved),
+                aurora.Direction.INFER_R,
+                evolved.state.do,
+            )
+        return WindowResolution(self, evolved, state, emergent)
+
+
+@dataclass(frozen=True)
+class WindowResolution:
+    """Structural consequence of evolving tensor ``2`` in ``(A,B,2)``.
+
+    On closure the superior unit is the emergence of ``(A,B,2_evolved)``.
+    When ambiguity remains, ``2_evolved`` itself is retained for the next
+    same-scale window.  On contradiction ``A`` is already the coherent unit
+    and ``B`` is retained.  No reduced carry type is created.
+    """
+
+    window: FractalWindow
+    evolved: aurora.Unit
+    state: aurora.RelationState
+    emergent: aurora.Unit | None = None
+
+    def __post_init__(self) -> None:
+        if self.state not in (
+            aurora.RelationState.CLOSED,
+            aurora.RelationState.OPEN,
+            aurora.RelationState.CONTRADICTION,
+        ):
+            raise aurora.AuroraError("a tensor window has only three stable outcomes")
+        if self.evolved.children != self.window.slots:
+            raise aurora.AuroraError("evolved tensor 2 must preserve A, B and tensor 2")
+        if not aurora.reexecute(self.evolved):
+            raise aurora.AuroraError("an evolved tensor 2 must re-execute")
+        if self.state is aurora.RelationState.CLOSED:
+            if self.emergent is None:
+                raise aurora.AuroraError("a coherent window must produce an emergence")
+            if self.emergent.children != (
+                self.window.a,
+                self.window.b,
+                self.evolved,
+            ):
+                raise aurora.AuroraError(
+                    "window emergence must preserve A, B and evolved tensor 2"
+                )
+            if not aurora.reexecute(self.emergent):
+                raise aurora.AuroraError("a superior window emergence must re-execute")
+        elif self.emergent is not None:
+            raise aurora.AuroraError(
+                "an open or incoherent window cannot publish a relation emergence"
+            )
+
+    @property
+    def superior(self) -> aurora.Unit | None:
+        if self.state is aurora.RelationState.CLOSED:
+            return self.emergent
+        if self.state is aurora.RelationState.CONTRADICTION:
+            return self.window.a
+        return None
+
+    @property
+    def carry(self) -> aurora.Unit | None:
+        if self.state is aurora.RelationState.OPEN:
+            return self.evolved
+        if self.state is aurora.RelationState.CONTRADICTION:
+            return self.window.b
+        return None
+
+    def continue_with(self, following: aurora.Unit) -> FractalWindow:
+        """Build ``(carry, following, new 2)`` and inherit the carry's ``O``."""
+
+        if self.carry is None:
+            raise aurora.AuroraError(
+                "a closed tensor window starts afresh from two following tensors"
+            )
+        return FractalWindow.open(self.carry, following, self.carry.state.do)
+
+
+@dataclass(frozen=True)
+class WindowLevel:
+    """One left-to-right application of the corrected window law."""
+
+    inputs: tuple[aurora.Unit, ...]
+    superior: tuple[aurora.Unit, ...]
+    residual: tuple[aurora.Unit, ...]
+    attempts: tuple[WindowResolution, ...]
+
+    @property
+    def complete(self) -> bool:
+        return not self.residual
+
+
+def resolve_level(
+    items: Sequence[aurora.Unit],
+    phase: Sequence[aurora.Trit] = aurora.OPEN,
+) -> WindowLevel:
+    """Resolve a stream using only ``(A,B,2)`` windows.
+
+    Closure consumes ``A`` and ``B`` and publishes the emergence of
+    ``(A,B,2_evolved)`` above.  Openness retains the complete evolved tensor
+    ``2`` as carry.  Contradiction publishes ``A`` and retains ``B``.  A
+    continuation consumes exactly one new source tensor because its third
+    position is always a fresh tensor ``2``.
+    """
+
+    original = tuple(items)
+    if not all(aurora.reexecute(unit) for unit in original):
+        raise aurora.AuroraError("a tensor-window stream must be re-executable")
+    pending = list(original)
+    retained: aurora.Unit | None = None
+    superior: list[aurora.Unit] = []
+    attempts: list[WindowResolution] = []
+    phase = aurora.triplet(phase)
+
+    while True:
+        if retained is None:
+            if len(pending) < 2:
+                break
+            a, b = pending.pop(0), pending.pop(0)
+            window_phase = phase
+        else:
+            if not pending:
+                break
+            a, b = retained, pending.pop(0)
+            window_phase = retained.state.do
+            retained = None
+
+        attempt = FractalWindow.open(a, b, window_phase).deduce()
+        attempts.append(attempt)
+        if attempt.superior is not None:
+            superior.append(attempt.superior)
+        retained = attempt.carry
+
+    residual = (() if retained is None else (retained,)) + tuple(pending)
+    return WindowLevel(original, tuple(superior), residual, tuple(attempts))
 
 
 @dataclass(frozen=True)
@@ -395,9 +613,14 @@ __all__ = [
     "FractalTensorDictionary",
     "FractalTopology",
     "FractalWindow",
+    "OrientedBoundary",
     "TensorLookup",
     "TensorNode",
     "TripletPassage",
     "UnitPassage",
+    "WindowLevel",
+    "WindowResolution",
+    "open_unit",
     "pass_triplet",
+    "resolve_level",
 ]

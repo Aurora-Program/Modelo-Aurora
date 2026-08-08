@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aurora-compact"
-version = "0.18.0rc1"
+version = "0.18.0rc2"
 description = "Compact executable reference kernel for the Aurora model"
 readme = "aurora_compact/README.md"
 requires-python = ">=3.11"

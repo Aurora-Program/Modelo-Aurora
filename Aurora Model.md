@@ -170,8 +170,6 @@ Las caras C4, C5 y C6 agregan la dirección, la coherencia y el gasto mediante l
 
 **Especialización mediante diccionarios.** Cada nodo puede ordenar y priorizar su diccionario según su experiencia y su dominio. Aunque los tensores sean compartidos, su organización local determina qué conocimiento se consulta primero. La especialización reduce el espacio de búsqueda sin romper la compatibilidad de la red.
 
-El diccionario local y la red distribuida no requieren dos algoritmos de búsqueda. En ambos casos, buscar consiste en reconstruir por deducción el elemento que completa una relación. La única diferencia es la escala: localmente se deduce un tensor de conocimiento; en la red se deduce el tensor-identidad del nodo capaz de ayudar.
-
 **Homoiconicidad.** Al representar información, conocimiento, memoria y control mediante la misma estructura, Aurora reduce la necesidad de subsistemas independientes y mecanismos especiales de traducción. La metacognición —saber cómo decidir— puede almacenarse y transmitirse igual que cualquier otro conocimiento.
 
 ### 0.4 La hipótesis de Aurora
@@ -202,35 +200,51 @@ El TriGate es la relación mínima del modelo. Contiene dos operandos $A$ y $B$,
 
 $$\hat{R} = \text{Majority}_3(A, B, M)$$
 
-La misma relación puede recorrerse en sentido inverso. La dirección $C$ no introduce otra operación: indica cuál de las tres variables transformables debe resolverse mientras $A$ actúa como ancla.
+La misma relación puede recorrerse en varias direcciones. $C$ no introduce otra operación: expresa qué papel de la relación debe resolverse mientras $A$ actúa como ancla. En la formulación autocontrolada, las variables transformables se ordenan como:
 
-- **C = 0:** reconstruir $M$ a partir de $A$, $B$ y $R$; aprendizaje.
-- **C = 1:** reconstruir $R$ a partir de $A$, $B$ y $M$; inferencia.
-- **C = 2:** reconstruir $B$ a partir de $A$, $M$ y $R$; deducción o búsqueda.
+$$X_C = (M, R, B)$$
 
-La deducción se expresa mediante el dominio compatible:
+Cuando existe una única apertura entre esos tres papeles, su posición produce una orientación local:
 
-$$D(A, M, R) = \{B \in \{0,1,2\} \mid \text{Majority}_3(A, B, M) = R\}$$
+$$C_{\text{local}} = \text{posición}_2(M, R, B)$$
 
-El dominio puede ser vacío, contener una solución única o conservar varias candidatas. Un trit `2` es un valor literal posible; no debe confundirse con un conjunto de varias soluciones. La multiplicidad pertenece al dominio de candidatas y a su estado $E_C$.
+| C | Variable transformada | Lectura operacional | Ancla |
+|:---:|---|---|---|
+| 0 | M | Aprendizaje | A, B y R |
+| 1 | R | Inferencia | A, B y M |
+| 2 | B | Deducción | A, M y R |
 
-Por tanto, inferir, deducir y aprender son tres orientaciones de una misma relación. El TriGate no necesita tres algoritmos: conserva una estructura y cambia la celda que se considera abierta a corrección.
+Por tanto, aprender, inferir y deducir son tres orientaciones de una misma relación. El TriGate no necesita tres algoritmos: conserva una estructura y cambia la celda que permanece abierta a resolución.
+
+La cantidad y la posición de los valores `2` determinan el estado dinámico del TriGate. Sin aperturas, la relación está determinada y $E$ debe decidir si cierra o contradice. Con una sola apertura entre $(M, R, B)$, su posición ofrece una candidata $C_{\text{local}}$, aunque no garantiza que la solución sea única. Con dos aperturas existen varias orientaciones posibles y el autómata debe esperar contexto o una señal convergente. Con tres aperturas no hay orientación interna preferente.
+
+Así, el TriGate no es solo una puerta lógica: es un autómata relacional ternario dirigido por eventos. Su estado puede escribirse como:
+
+$$q_t = (A, B, M, R, E, C, O)_t$$
+
+Una modificación en una celda compartida desencadena una transición local. El autómata intenta resolver el papel abierto, evalúa el nuevo estado y publica únicamente aquello que cambió.
 
 El paquete observable del TriGate es:
 
 $$\mathcal{T} = (R,\ E_C,\ O)$$
 
-$R$ expresa el valor emergente; $E_C$ expresa el estado emergente después de resolver en la dirección $C$; $O$ conserva la posición, el sentido o el siguiente recorrido necesario para continuar. $E$ no se interpreta de forma aislada: depende de $R$, de $C$ y de $O$.
+$R$ expresa el valor emergente; $E_C$ expresa el estado relacional emergente después de resolver en la orientación $C$; $O$ conserva la posición, el sentido o el siguiente recorrido necesario para continuar. $E$ no se interpreta de forma aislada: depende de $R$, de la relación recorrida y de $C$.
 
 ---
 
 ## 2. El TriGate: emergencia dependiente de R y de C
 
-$E$ no es una segunda votación ni un indicador booleano universal de éxito. Su significado depende del resultado $R$ y de la dirección que se está intentando resolver. La misma configuración puede cerrar al corregir $R$, permanecer abierta al corregir $M$ o exigir deducir $B$. Por eso la notación canónica es $E_C$.
+$E$ no es una segunda votación ni un indicador booleano universal de éxito. Es información producida por la relación acerca de su propio estado. $R$ responde «qué valor emerge»; $E$ responde «cómo queda la relación que ha producido ese valor desde la orientación recorrida». La misma configuración puede cerrar al inferir $R$, permanecer abierta al aprender $M$ o no admitir una deducción única de $B$. Por eso la notación canónica es $E_C$.
 
-Cuando $R$ pertenece a $\{0, 1\}$, $E_C$ distingue tres situaciones relacionales: mayoría o cierre en la dirección ensayada; antimayoría o contradicción respecto de esa dirección; y estado no monótono o todavía abierto. La tabla exhaustiva de estos casos debe congelarse junto con la implementación, porque cambiar $C$ cambia la variable candidata y obliga a recalcular $E$.
+Cuando $R$ pertenece a $\{0, 1\}$, $E_C$ distingue tres situaciones relacionales:
 
-Cuando $R = 2$, la regla ya está determinada: $E$ conserva el trit residual que no pertenece a la apertura mayoritaria. Si no existe un residual único, $E$ permanece en `2`.
+- $E_C = 1$: la relación cierra en la orientación $C$.
+- $E_C = 0$: la relación es contradictoria en esa orientación.
+- $E_C = 2$: la resolución todavía no es única o permanece abierta.
+
+La tabla exhaustiva de estos casos debe congelarse junto con la implementación, porque cambiar $C$ cambia el papel candidato y obliga a recalcular $E$.
+
+Cuando $R = 2$, $E$ deja de evaluar un cierre que aún no existe y actúa como memoria residual o carry. Conserva el trit que no pertenece a la apertura mayoritaria; si no existe un residual único, $E$ permanece en `2`. Su ley puede resumirse así: cuando $R$ cierra, $E$ evalúa; cuando $R$ permanece abierto, $E$ transporta.
 
 | Tripleta operada | R | E cuando R = 2 | Interpretación |
 |---|:---:|:---:|---|
@@ -255,7 +269,7 @@ La unidad mínima de información estructurada es una tripleta $P = (p_0, p_1, p
 - **ES** es el valor estructural seleccionado por la ordenación. El valor de ES señala la posición que contiene FN.
 - **FO** es la posición restante, que no actúa ni como ES ni como FN.
 
-La autorreferencia se excluye: ES no puede seleccionar como FN la misma posición desde la que se define. La tripleta $(0, 1, 2)$ es, por ello, un tensor imposible como cierre literal. Puede emerger como firma abierta de una relación, pero no constituye un objetivo impuesto ni una condición externa de aceptación.
+La autorreferencia se excluye: ES no puede seleccionar como FN la misma posición desde la que se define. La tripleta $(0, 1, 2)$ es, por ello, un tensor imposible como cierre literal, aunque puede actuar como propósito que mantiene abierta y orientada la búsqueda.
 
 Cuando tres tripletas forman una unidad superior, la ordenación debe conservar la procedencia vertical:
 
@@ -301,9 +315,9 @@ $$DO_{t+1} = (O_{ES},\; O_{FN},\; O_{FO})$$
 
 | Canal | Entrada | Proyección superior | Función |
 |:---:|---|---|:---:|
-| ES | $(ES_1, ES_2, ES_3)$ | $R \to DS[0],\; E \to DE[0],\; O \to DO[0]$ | Estructura |
-| FN | $(FN_1, FN_2, FN_3)$ | $R \to DS[1],\; E \to DE[1],\; O \to DO[1]$ | Función |
-| FO | $(FO_1^*, FO_2^*, FO_3^*)$ | $R \to DS[2],\; E \to DE[2],\; O \to DO[2]$ | Forma |
+| ES | $(ES_1, ES_2, ES_3)$ | $R \to DS[0],\ E \to DE[0],\ O \to DO[0]$ | Estructura |
+| FN | $(FN_1, FN_2, FN_3)$ | $R \to DS[1],\ E \to DE[1],\ O \to DO[1]$ | Función |
+| FO | $(FO_1^*, FO_2^*, FO_3^*)$ | $R \to DS[2],\ E \to DE[2],\ O \to DO[2]$ | Forma |
 
 La tripleta de conocimiento se escribe en el orden operativo:
 
@@ -321,93 +335,69 @@ El transcender aplica la misma cara a tres estructuras del mismo tipo: entrada $
 
 $$\Phi(I, K, S;\; C, DO_t) \;\to\; (DO_{t+1},\; DE_C,\; DS)$$
 
-La entrada actúa como evidencia. Cuando todavía no existe una memoria capaz de proponer otra cosa, la salida comienza como reflejo de la entrada: $S_0 = I$. A partir de ese estado, cada componente de $S$ debe proceder de $I$ o de una candidata recuperada del diccionario. Aurora no inventa una salida sin procedencia.
+En inferencia ordinaria, la entrada actúa como evidencia y la salida comienza abierta: $S_0 = (2, 2, 2)$. La salida se reconfigura hasta cerrar una relación coherente con $I$ y $K$, congruente con las salidas anteriores conservadas en el conocimiento y admisible dentro del gasto disponible.
 
-Una salida completa no significa una salida sin trits `2`. Significa que el paquete entero posee procedencia y puede reejecutarse. Un `2` puede permanecer cerrado si representa de forma coherente apertura, ausencia de relación, exterioridad o cualquier otro valor ternario legítimo.
+Las tres caras que adquieren función de control operan canales homólogos de $I$, $K$ y $S$. No reciben órdenes de un supervisor; condensan señales relacionales que ya han emergido en los TriGates inferiores:
 
-Las tres caras de control operan canales homólogos de $I$, $K$ y $S$:
+- **C4** opera $(DS_I, DS_K, DS_S)$. Su propósito es `0-1-2`: una configuración imposible como cierre literal que funciona como tensor de búsqueda y dirección.
+- **C5** opera $(DE_I, DE_K, DE_S)$. Su propósito de convergencia positiva es `1-1-1` y clasifica la coherencia conjunta.
+- **C6** opera $(DO_I, DO_K, DO_S)$. Su propósito es `0-0-0` y conserva el recorrido de iteración y el gasto de búsqueda.
 
-- **C4** opera $(DS_I,\; DS_K,\; DS_S)$.
-- **C5** opera $(DE_I,\; DE_K,\; DE_S)$.
-- **C6** opera $(DO_I,\; DO_K,\; DO_S)$.
+C4, C5 y C6 comparten sus resultados y forman otra cara. No supervisan Aurora desde fuera. Sus paquetes se reordenan, entrelazan, proyectan y vuelven a producir $(DO, DE, DS)$ exactamente igual que las tripletas inferiores. Su posición les da una función reguladora, pero su naturaleza computacional sigue siendo la de una relación ordinaria.
 
-C4, C5 y C6 no son controladores externos. Cada una es un sistema respecto de las tres unidades que recibe y, al mismo tiempo, un elemento de la capa superior. Cada cara produce su propio paquete:
+Cada TriGate afectado produce un estado $E_C$ y una propuesta de continuidad $O$. Las coordenadas homólogas de esas salidas forman $DE$ y $DO$; al volver a relacionarse en C4, C5 y C6, generan la orientación que será usada en el intento siguiente. El ciclo temporal es:
 
-$$C4 \to (DO_4, DE_4, DS_4)$$
-$$C5 \to (DO_5, DE_5, DS_5)$$
-$$C6 \to (DO_6, DE_6, DS_6)$$
+$$C_t \;\to\; E_C \text{ y } O \text{ locales} \;\to\; \text{propagación por } DE \text{ y } DO \;\to\; \text{convergencia relacional} \;\to\; C_{t+1}$$
 
-Sus proyecciones homólogas forman tres nuevas tripletas:
+$C_t$ orienta el intento actual. $C_{t+1}$ no está disponible de antemano ni lo dicta un componente central: emerge al converger las consecuencias relacionales publicadas durante ese intento. La separación temporal evita una circularidad instantánea y permite reejecutar el proceso.
 
-$$HDS = (DS_4, DS_5, DS_6)$$
-$$HDE = (DE_4, DE_5, DE_6)$$
-$$HDO = (DO_4, DO_5, DO_6)$$
+Los propósitos `0-1-2`, `1-1-1` y `0-0-0` son estructuras de conocimiento reutilizables, no números reales contra los que deba calcularse una distancia externa. La distancia Manhattan se elimina del núcleo. Una propuesta se evalúa reejecutándola y observando si la propia cara alcanza cierre, apertura, contradicción o un estado ya visitado.
 
-Tres TriGates ordinarios operan estas tripletas y producen el control emergente:
-
-- $RD = R(HDS)$: `0` aprender; `1` inferir; `2` deducir o buscar.
-- $RC = R(HDE)$: `0` incoherente; `1` coherente; `2` ambiguo.
-- $RO = R(HDO)$: `0` buscar en el diccionario local; `1` buscar en la red Aurora; `2` detener.
-
-Los patrones `0-1-2`, `1-1-1` y `0-0-0` no se imponen como invariantes del control ni se usan como destinos contra los que calcular una distancia. Pueden emerger como firmas de determinadas relaciones, pero la decisión procede únicamente de $RD$, $RC$ y $RO$. Tampoco se necesita una función Manhattan ni otro evaluador externo.
-
-Inferir significa sintetizar el paquete y encontrar, mediante el conocimiento, una salida completa para el conjunto. Aprender reconstruye $M$ y conserva una relación nueva. Deducir reconstruye $B$ y es también la operación de búsqueda. Las tres acciones son las tres direcciones del mismo TriGate.
-
-La regla autosimilar queda explícita: una unidad es sistema respecto de sus tres componentes y elemento respecto de la capa que la contiene. El control no está situado fuera de Aurora; emerge cuando los resultados de un nivel vuelven a convertirse en entradas del siguiente.
+| Estado de C5 / DE | Lectura |
+|:---:|---|
+| `1-1-1` | Cierre positivo: salida aceptable si también es congruente con el conocimiento |
+| `0-0-0` | Cierre negativo: contradicción estable o alternativa descartable |
+| `2-2-2` | Apertura estable: falta información; la evolución de U puede producir carry |
+| Mixto | Estado transitorio: reorientar, aprender o continuar |
 
 ---
 
-## 6. El control emergente como cara ordinaria
+## 6. La semilla de armonización como cara ordinaria
 
-El nombre *semilla de armonización* describe únicamente el papel desempeñado por C4, C5 y C6. No designa una semilla especial. La misma secuencia que produce conocimiento en una cara inferior produce $RD$, $RC$ y $RO$ en la capa superior.
+El nombre *semilla de armonización* describe un papel, no una arquitectura especial. La forman C4, C5 y C6 al operar como una cara superior. Su estado es $K_{\text{arm}} = (DO_{\text{arm}}, DE_{\text{arm}}, DS_{\text{arm}})$. La orientación que produce su convergencia determina qué parte del transcender se reconfigura en el intento siguiente.
 
-**$RD$ decide qué relación debe reconstruirse:**
+| Dirección C | Elemento corregido | Efecto en el transcender |
+|:---:|---|---|
+| 1 — inferir | Salida / R | Reconstruye la propuesta de salida |
+| 0 — aprender | Conocimiento / M | Crea o selecciona una relación de conocimiento alternativa |
+| 2 — deducir | Entrada abierta / B | Reconstruye un operando cuando la operación lo permite |
 
-- $RD = 0$: aprende reconstruyendo $M$.
-- $RD = 1$: infiere reconstruyendo $R$ y sintetizando la salida.
-- $RD = 2$: deduce o busca reconstruyendo $B$.
-
-**$RC$ declara el estado de congruencia del resultado:**
-
-- $RC = 0$: impide consolidar la candidata por incoherencia.
-- $RC = 1$: permite aceptar la relación como coherente.
-- $RC = 2$: conserva la ambigüedad y puede transportar carry.
-
-**$RO$ determina el alcance de la búsqueda:**
-
-- $RO = 0$: continúa dentro del diccionario local.
-- $RO = 1$: eleva la consulta a la red, que es el diccionario de la capa superior.
-- $RO = 2$: detiene la búsqueda.
-
-Después de cada cambio se recalcula $E_C$. Por ello, una misma relación puede producir valores $E$ diferentes en aprendizaje, inferencia y deducción. Esta dependencia direccional replica exactamente la regla del TriGate.
+Después de cada cambio se recalcula $E_C$. Por ello, una misma semilla operativa puede producir valores $E$ diferentes en aprendizaje, inferencia y deducción. Esta dependencia direccional replica exactamente la regla del TriGate.
 
 ### 6.1 Ciclo de realimentación
 
-1. Tomar una fotografía estable de todas las caras de la ventana y del $DO$ vigente.
-2. Reejecutar C4, C5 y C6 y obtener sus tres paquetes $(DO, DE, DS)$.
-3. Proyectar $HDS$, $HDE$ y $HDO$ y operar cada tripleta con un TriGate ordinario.
-4. Aplicar $RD$: aprender $M$, inferir $R$ o deducir $B$.
-5. Aplicar $RC$: rechazar por incoherencia, aceptar por coherencia o conservar ambigüedad.
-6. Cuando $RD$ requiere una candidata, aplicar $RO$: consultar el diccionario local, elevar la consulta a la red o detener.
-7. Publicar las modificaciones como entradas del intento siguiente. Si la relación permanece abierta, transportar $DE$ junto con $DO$ como carry.
+1. Tomar una fotografía estable de todas las caras de la ventana, de $C_t$ y del $DO$ vigente.
+2. Reejecutar los TriGates afectados con $C_t$ y publicar sus nuevos paquetes $(R, E_C, O)$.
+3. Proyectar las salidas locales sobre $DS$, $DE$ y $DO$ y reejecutar C4, C5 y C6 como relaciones ordinarias.
+4. Componer sus resultados hasta que emerja una orientación convergente $C_{t+1}$. Si todavía existen varias orientaciones legítimas, conservar $C_t$ como orientación heredada o suspender la transición y transportar la apertura; no asignar arbitrariamente un valor nuevo a $C$.
+5. Si C5 alcanza `1-1-1` y la salida es congruente con el conocimiento reutilizado, aceptar la salida.
+6. Si la convergencia determina $C_{t+1} = 1$ antes del cierre positivo, corregir $R/S$: el sistema está infiriendo.
+7. Si C5 no puede cerrar con la propuesta reutilizada y emerge $C_{t+1} = 0$, corregir $M/K$: el sistema aprende una alternativa.
+8. Si emerge $C_{t+1} = 2$ y $B$ es la única celda abierta, reconstruir el operando: el sistema está deduciendo. Si hay varias celdas abiertas, todavía no ha emergido una $C$ válida y debe conservarse la apertura.
+9. Si la dirección permanece abierta, conservar la evolución completa del tensor $U$ y transportarla como carry hacia la relación siguiente. El carry ocupa la posición $A$ de la nueva ventana; no se reduce al par $(DE, DO)$.
+10. Si $DO$ no dispone de otro estado admisible y no visitado, detener la búsqueda, marcar la entrada como no resuelta y cambiar de fase o de ventana.
 
-El ciclo se realimenta entre todas las semillas operativas de la ventana. Una modificación local vuelve a proyectar $DS$, $DE$ y $DO$; esos canales reactivan C4, C5 y C6; y el proceso continúa hasta obtener una decisión común para toda la ventana.
-
-Parar y cerrar son decisiones distintas. $RO = 2$ termina el recorrido; $RC$ declara cómo termina:
-
-- $(RC, RO) = (1, 2)$: cierre coherente.
-- $(RC, RO) = (2, 2)$: parada ambigua o relación no resuelta.
-- $(RC, RO) = (0, 2)$: detención por incoherencia o agotamiento sin solución válida.
+El ciclo se realimenta entre todas las semillas operativas de la ventana. Una modificación local vuelve a proyectar $DS$, $DE$ y $DO$; esos canales reactivan las relaciones vecinas y C4, C5 y C6; y el proceso continúa hasta obtener una decisión común para toda la ventana. La señal de control es, por tanto, la forma superior adquirida por información relacional convergente.
 
 ### 6.2 Gasto y condición de parada
 
-$DO$ es simultáneamente orientación, alcance y registro de iteración. Cada intento tiene coste porque consume un estado del recorrido. El sistema solo visita los estados admitidos por la sucesión canónica de búsqueda —planteada como recorrido Fibonacci en base tres— y no vuelve a probar un estado mientras el contexto no cambie.
+$DO$ es simultáneamente orientación y registro de iteración. Cada intento tiene coste porque consume un estado del recorrido. El sistema solo visita los estados admitidos por la sucesión canónica de búsqueda —planteada como recorrido Fibonacci en base tres— y no vuelve a probar un estado mientras el contexto no cambie.
 
-La condición de parada no es una distancia numérica ni la presencia aislada de trits `2` en el contenido. La decisión aparece al operar el canal superior:
+La condición dura de parada no es una distancia numérica ni la presencia aislada de dos valores `2`. Es el agotamiento del recorrido:
 
-$$\text{detener} \iff R(HDO) = 2$$
+$$\text{detener} \iff \nexists \text{ estado } DO \text{ admisible y no visitado}$$
 
-Este resultado sintetiza el agotamiento del recorrido admisible. $R(HDO) = 0$ conserva la búsqueda local y $R(HDO) = 1$ cambia de escala sin introducir un mecanismo de encaminamiento distinto. La tabla exhaustiva de $E_C$, $O$ y del recorrido Fibonacci ternario debe codificarse y verificarse en el software, pero ya no exige añadir otro controlador a la arquitectura.
+> **Pendiente de congelación:** La tabla completa de $E$ para $R \in \{0,1\}$, la selección exacta de $O$ en todas las permutaciones de $(0,1,2)$, la enumeración completa del recorrido Fibonacci ternario y la regla de desempate cuando C4 y C5 permanecen simultáneamente abiertos deben fijarse antes de implementar la tabla exhaustiva de estados. El documento no introduce una heurística provisional para ocultar estas decisiones.
 
 ---
 
@@ -429,29 +419,55 @@ La construcción del tensor es también un proceso competitivo. Una tripleta can
 
 ## 8. Procesamiento mediante ventana deslizante
 
-La ventana recibe tres tensores o tripletas del mismo nivel y los opera como una cara. Entrada, conocimiento y salida se realimentan mediante C4, C5 y C6 hasta producir una decisión para la ventana completa. $DO$ pertenece a la ventana durante este ciclo y no se reinicia en cada semilla operativa.
+### 8.1 Composición de la ventana
 
-- **Cierre coherente:** cuando $RC = 1$ y $RO = 2$, emerge una unidad superior $(DO, DE, DS)$, se conserva la traza de sus tres descendientes y la unidad puede entrar en la siguiente escala.
-- **Incoherencia:** cuando $RC = 0$, la alternativa no se consolida. Mientras $RO = 0$ se prueba otra candidata local; con $RO = 1$ la consulta asciende a la red; con $RO = 2$ termina sin solución válida.
-- **Ambigüedad:** cuando $RC = 2$, $DE$ y su orientación $DO$ pueden transportarse como carry. El carry no es un resultado cerrado, sino una relación que necesita el siguiente contexto.
-- **Alcance:** $RO = 0$ mantiene la búsqueda en la memoria local; $RO = 1$ eleva la misma consulta a la red; $RO = 2$ detiene el recorrido. La red no es una excepción a la ventana, sino la siguiente escala de la misma operación.
+La ventana opera tres tensores o tripletas del mismo nivel:
 
-Todas las caras de una ventana usan una fotografía estable. Los cambios producidos durante un intento se publican para el intento siguiente. Esta separación $DO_t \to \text{operación } t \to DO_{t+1}$ evita dependencias circulares instantáneas y permite reproducir la ejecución.
+$$W_i = (A_i,\ B_i,\ U_i)$$
 
-Al finalizar un clúster, las unidades emergentes vuelven a agruparse de tres en tres y se repite el mismo proceso. No existe una operación especial de subida: la salida de una cara es la entrada de la siguiente.
+$A$ y $B$ ocupan el canal de continuidad del clúster tensorial de tokens. En la primera ventana ambos proceden directamente del clúster. En las ventanas siguientes, $A$ también puede contener el tensor desplazado desde la ventana anterior o un carry; $B$ incorpora el siguiente tensor todavía no consumido del clúster.
+
+$U$ es el tensor abierto de resolución. Se inicializa con la misma forma que $A$ y $B$ y con todos sus valores en `2`:
+
+$$U_0 = (2, 2, \ldots, 2)$$
+
+$U$ no representa un tercer token ni un tercer tensor observado. Representa el espacio completamente desconocido que la relación entre $A$ y $B$ puede transformar. Por eso se emplea la letra $U$ —*unknown*— y no $K$, ya reservado para el conocimiento, ni «tensor 2», que podría confundirse con un único trit.
+
+Entrada, conocimiento y salida se realimentan mediante C4, C5 y C6 hasta producir una decisión para la ventana completa. $DO$ pertenece a la ventana durante este ciclo y no se reinicia en cada semilla operativa. Todas las caras usan una fotografía estable; los cambios producidos durante un intento se publican para el siguiente. Esta separación $DO_t \to \text{operación } t \to DO_{t+1}$ evita dependencias circulares instantáneas y permite reproducir la ejecución.
+
+### 8.2 Evolución según el resultado
+
+**Cierre positivo — $DE = 1$.** La relación entre $A$ y $B$ cierra. Emerge una unidad superior derivada de la ventana, se conserva la traza de $A$, $B$ y de la evolución de $U$, y la nueva unidad puede participar en el ciclo tensorial del nivel siguiente.
+
+**Incoherencia concluyente — $DE = 0$.** La ventana no fuerza una síntesis entre $A$ y $B$. $A$ emerge solo, conservando su identidad y su procedencia. $B$ se desplaza y ocupa la posición $A$ de la ventana siguiente; el próximo tensor $T$ del clúster ocupa $B$ y se crea un $U$ nuevo completamente abierto:
+
+$$(A_i, B_i, U_i) \;\to\; A_i^\uparrow \;;\quad W_{i+1} = (B_i, T_{i+1}, U_0)$$
+
+**Ambigüedad — $DE = 2$.** No ascienden $A$ ni $B$ como una síntesis cerrada. La evolución alcanzada por $U$ se conserva íntegramente como carry y ocupa la posición $A$ de la ventana siguiente. El próximo tensor $T$ del clúster ocupa $B$ y la nueva ventana recibe otro $U_0$ completamente desconocido:
+
+$$(A_i, B_i, U_i) \;\to\; W_{i+1} = (U_i^*,\, T_{i+1},\, U_0)$$
+
+Aquí $U_i^*$ es el estado completo de $U$ después de operar la ventana. El carry no es solamente $DE$ acompañado por $DO$: es el tensor relacional evolucionado que todavía necesita contexto para cerrar.
+
+**Agotamiento — sin otro $DO$ admisible.** La ventana se marca como no resuelta. El sistema conserva su estado y cambia de fase, de segmentación o de ventana sin inventar un cierre.
+
+### 8.3 Regla de frontera del clúster
+
+Cuando ya no existe un nuevo tensor $T_{i+1}$ y la última relación entre $A$ y $B$ no es coherente, ninguno se descarta ni se obliga a cerrar con el otro. $A$ y $B$ ascienden por separado, en su orden, al ciclo superior de tensores. Allí podrán entrar en nuevas ventanas con el contexto producido por otras unidades del nivel.
+
+Esta regla de frontera evita que el último tensor quede huérfano y distingue dos movimientos: el **cierre vertical**, que sintetiza una relación coherente, y la **conservación vertical**, que eleva unidades pendientes sin afirmar una síntesis inexistente.
 
 ---
 
 ## 9. El proceso de extensión
 
-La extensión recorre el tensor en sentido descendente. No invierte una fórmula distinta: plantea la unidad que falta como $B$, aplica $C = 2$ y reejecuta con el mismo TriGate.
+La extensión recorre el tensor en sentido descendente. No invierte una fórmula distinta: consulta las tripletas que dieron origen a la unidad superior, aplica la dirección adecuada y las reejecuta con el mismo TriGate.
 
-1. Usar $DS$ como parte de la relación deductiva, no como identidad única ni como clave de igualdad exacta.
-2. Calcular $D(A, M, R)$ y recuperar primero las candidatas compatibles de la memoria temporal de la ventana.
-3. Si $RO = 0$, continuar en el diccionario local. Si $RO = 1$, elevar la misma relación incompleta a la red. Si $RO = 2$, detener.
-4. Ordenar las candidatas con $DO$ y comprobar su $DE$ en la dirección de reconstrucción.
-5. Reejecutar la candidata dentro de la relación completa. Si cierra y es congruente, extenderla; si no, probar la siguiente.
-6. Si ninguna candidata cierra y $RD = 0$, aprender una nueva relación y añadirla como competidora. Si $RO = 2$, conservar la clasificación final indicada por $RC$.
+1. Usar $DS$ como índice del espacio de búsqueda, no como identidad única.
+2. Recuperar primero las candidatas de la memoria temporal de la ventana y después las del diccionario.
+3. Ordenar las candidatas con $DO$ y comprobar su $DE$ en la dirección de reconstrucción.
+4. Reejecutar la candidata dentro de la relación completa. Si cierra y es congruente, extenderla; si no, probar la siguiente.
+5. Si ninguna candidata cierra y queda gasto, calcular una nueva tripleta y añadirla como competidora. Si el gasto se agota, conservar apertura o marcar error.
 
 La extensión refleja la asimetría del TriGate. Cuando $R = 2$, $E$ y $O$ pueden conservar el residual y su orientación, permitiendo una reconstrucción estructural sin pérdida. Cuando $R$ pertenece a $\{0, 1\}$, la síntesis conserva la ley mayoritaria y el detalle que no quedó determinado reaparece como `2`. La extensión no inventa ese detalle: lo vuelve a declarar abierto.
 
@@ -461,43 +477,28 @@ La dirección depende del objeto reconstruido: extender una salida usa inferenci
 
 ## 10. El diccionario: encadenamiento, competencia y lexicalización
 
-El diccionario es parte de la operación, no una memoria auxiliar separada. Conserva relaciones completas y reejecutables, no solamente resultados aislados. Su unidad mínima incluye entrada, conocimiento, salida y dirección:
-
-$$U = (I,\; K,\; S,\; C)$$
-
-La unidad conserva además su paquete emergente $(DO, DE, DS)$, su procedencia y las referencias necesarias para reproducir el cierre.
+El diccionario es parte de la operación, no una memoria auxiliar separada. Conserva las tripletas y tensores que han sido producidos por caras anteriores, junto con el conocimiento necesario para reejecutarlos.
 
 ### 10.1 La salida de una cara entra en el diccionario
 
-Cuando una semilla operativa recibe tres tripletas y su conocimiento aplicable, calcula una nueva tripleta $T'$. La relación que la produjo se almacena completa:
+Cuando una semilla operativa recibe tres tripletas y su conocimiento aplicable, calcula una nueva tripleta $T'$. La unidad almacenada incluye tanto el resultado como su paquete de conocimiento:
 
-$$(T_1, T_2, T_3;\; K,\; C) \;\to\; U = (I, K, S = T', C)$$
+$$(T_1, T_2, T_3;\; K,\; C) \;\to\; (T',\; K_{T'})$$
 
-El diccionario puede organizar familias mediante $DS$, $DE$, $DO$ y $C$, pero estas coordenadas no deciden por igualdad exacta. Solo reducen el espacio de candidatas. La validez se determina deduciendo, reejecutando y comprobando el cierre de la relación completa.
+$$\text{diccionario}[DS, C] \;\to\; \{(T'_1, K_1),\; (T'_2, K_2),\; \ldots\}$$
 
-La salida no es efímera. Se convierte en una unidad reutilizable y puede encadenarse como entrada de otra cara. La misma relación puede conservar más de una salida o más de un conocimiento candidato; las alternativas compiten sin borrar las que siguen siendo válidas en otros contextos.
+La salida no es efímera. Se convierte en una unidad reutilizable y puede encadenarse como entrada de otra cara. $DS$ localiza una familia de candidatas; $DE$, $DO$, $C$ y la reejecución contextual determinan cuál es válida.
 
-### 10.2 Búsqueda deductiva y competencia
+### 10.2 Competencia entre tripletas y tensores
 
-Buscar en el diccionario es ejecutar el TriGate en dirección deductiva $C = 2$. $A$, $M$ y el resultado buscado $R$ forman la consulta; $B$ es el tensor que debe recuperarse:
+1. Consultar el diccionario por $DS$ y por la dirección $C$.
+2. Reutilizar primero una candidata compatible con $DE$ y $DO$ que haya cerrado previamente en un contexto equivalente.
+3. Reejecutarla dentro de la cara y de la ventana actuales.
+4. Si vuelve a cerrar, conservarla y actualizar su prioridad de uso.
+5. Si no cierra, probar otra candidata sin eliminar la anterior.
+6. Si ninguna cierra y $DO$ permite continuar, calcular una nueva tripleta, almacenarla y hacerla competir con las anteriores.
 
-$$D(A, M, R) = \{B \mid \text{Majority}_3(A, B, M) = R\}$$
-
-Ejemplos: $D(0,2,0) = \{0\}$; $D(0,2,2) = \{1,2\}$; $D(1,2,1) = \{1\}$; $D(2,2,2) = \{0,1,2\}$.
-
-- Si el dominio es vacío, esa familia no contiene solución.
-- Si contiene un único $B$, la deducción recupera directamente la candidata.
-- Si contiene varios $B$, las candidatas permanecen abiertas y compiten mediante reejecución, $RC$ y $DO$.
-
-Cuando $RO = 0$, la deducción se resuelve en el diccionario local. $RO = 1$ no cambia de operador: eleva la relación incompleta al diccionario distribuido. $RO = 2$ detiene la búsqueda.
-
-1. Reutilizar primero una candidata estructuralmente compatible que haya cerrado previamente en ese contexto.
-2. Reejecutarla dentro de la cara y de la ventana actuales.
-3. Si vuelve a cerrar, conservarla y actualizar su prioridad de uso.
-4. Si no cierra, probar otra candidata sin eliminar la anterior.
-5. Si ninguna cierra y $RD = 0$, aprender una nueva tripleta, almacenarla y hacerla competir con las anteriores.
-
-La candidata anterior puede seguir siendo correcta en otro contexto. Aurora no sustituye globalmente una representación por otra: conserva ramas alternativas y deja que el cierre congruente seleccione la aplicable. El mismo proceso entre tripletas crea los tensores; entre tensores crea niveles superiores; y entre tensores de consulta y tensores de nodo organiza la red.
+La candidata anterior puede seguir siendo correcta en otro contexto. Aurora no sustituye globalmente una representación por otra: conserva ramas alternativas y deja que el cierre congruente seleccione la aplicable. El mismo proceso entre tripletas crea los tensores y el mismo proceso entre tensores crea niveles superiores.
 
 ### 10.3 Tokens simples y complejos
 
@@ -523,58 +524,51 @@ Esta medición pertenece al prototipo anterior y debe repetirse con la cara tria
 
 ## 11. La red
 
-La red Aurora es el diccionario en la escala superior. Cuando $RO = 1$, el nodo local no ejecuta otro protocolo lógico: eleva la misma relación deductiva y busca como $B$ el tensor-identidad de un nodo capaz de completar la consulta:
+Los nodos intercambian tokens junto con sus unidades Aurora completas: tripletas o tensores, $K = (DO, DE, DS)$, procedencia y traza suficiente para reejecutar el cierre. Un nodo receptor no acepta conocimiento por autoridad; lo introduce como candidato en su diccionario y lo verifica dentro de su propio contexto.
 
-$$\text{consulta no resuelta} \;\to\; \text{deducción del tensor de nodo} \;\to\; \text{reejecución remota} \;\to\; \text{verificación local}$$
-
-Cada nodo adquiere y refina su tensor-identidad según las relaciones que ha ayudado a cerrar. Una respuesta válida aprende simultáneamente dos unidades: el conocimiento que resolvió la consulta y la relación entre esa consulta y el nodo que la resolvió. De este modo, los nombres de los nodos se ordenan semánticamente por su experiencia y especialización.
-
-Si no existe una coincidencia exacta, Aurora no introduce una distancia vectorial externa. Extiende o descompone el tensor abierto y deduce el nodo asociado con la estructura compatible más específica. Las candidatas compiten mediante la misma reejecución, coherencia y recorrido $DO$ que los elementos del diccionario local.
-
-El nodo seleccionado recibe la unidad abierta completa, no un token aislado. Inicia su resolución en su propio diccionario con $RO = 0$. Devuelve la candidata junto con $K = (DO, DE, DS)$, procedencia y traza suficiente para reejecutar el cierre. El nodo solicitante no acepta conocimiento por autoridad: lo verifica localmente antes de consolidarlo.
-
-Las estructuras y rutas útiles ganan prioridad porque vuelven a cerrar y reducen gasto. Las que no ayudan pierden prioridad de consulta sin necesidad de borrarse inmediatamente. Así, especialización, encaminamiento, reputación operativa e intercambio de conocimiento reutilizan la misma competencia del diccionario.
+Las estructuras útiles ganan prioridad porque vuelven a cerrar y reducen gasto. Las que no ayudan pierden prioridad de consulta sin necesidad de borrarse inmediatamente. De este modo, la especialización local y el intercambio global reutilizan el mismo mecanismo de competencia del diccionario.
 
 ---
 
 ## 12. Arranque del sistema
 
-El conocimiento vacío se representa mediante una unidad cuyos trits son `2`: $K_0 = \bot$. El arranque no activa un generador especial de salida. Mientras el diccionario no aporte otra candidata, $S_0 = I$: entrada y salida comienzan como una relación reflexiva reejecutable.
+El conocimiento vacío se representa mediante una unidad cuyos trits son `2`: $K_0 = \bot$. El arranque no debe activar una regla excepcional de copia; debe producir la primera candidata mediante la misma cara que se utilizará después.
 
-Toda salida posterior debe satisfacer:
+Existen dos situaciones distintas:
 
-$$S \in \{I\} \cup \text{Salidas}(\text{diccionario local}) \cup \text{Salidas}(\text{red})$$
-
-La relación inicial $(I, \bot, I)$ se opera como cualquier otra cara. Si $RD = 0$, produce una candidata de conocimiento; si $RD = 1$, sintetiza una salida con procedencia; si $RD = 2$, deduce el elemento que falta. La candidata entra en el diccionario y debe cerrar al ser reejecutada.
+- **Inferencia sin salida conocida:** $S_0 = (2, 2, 2)$. Aurora consulta $K_0$, intenta reconstruir $S$ y conserva la apertura si todavía no existe conocimiento suficiente.
+- **Aprendizaje con experiencia validada o reflejo inicial:** $S_0$ puede coincidir con $I$. La relación $(I, \bot, I)$ se opera como una cara y produce una candidata de conocimiento, que entra en el diccionario y debe cerrar al ser reejecutada.
 
 Por tanto, el primer conocimiento no aparece mediante la asignación especial $K \leftarrow I$. Aparece mediante la secuencia ordinaria:
 
 $$\text{vacío} \to \text{cara} \to \text{candidata} \to \text{diccionario} \to \text{reejecución} \to \text{cierre o alternativa}$$
 
-Si la candidata cierra, se reutiliza y puede formar estructuras superiores. Si no cierra, se aprende otra y ambas compiten. $RO$ decide si la búsqueda continúa localmente, asciende a la red o se detiene. El arranque, el aprendizaje continuo, la corrección y el encaminamiento usan exactamente el mismo proceso.
+Si la candidata cierra, se reutiliza y puede formar estructuras superiores. Si no cierra, se calcula otra y ambas compiten. Si ninguna cierra antes de agotar $DO$, la relación permanece abierta o cambia de fase. El arranque, el aprendizaje continuo y la corrección usan exactamente el mismo proceso.
 
 ---
 
 ## 13. Ejecución distribuida mediante autómatas relacionales
 
-Aurora se ejecuta como una red de relaciones activas. Cada TriGate conserva referencias a $A$, $B$, $M$, $R$, $E_C$ y $O$. Cuando cambia una celda, se reactivan únicamente las relaciones que la comparten:
+Aurora se ejecuta como una red de autómatas relacionales activos. Cada TriGate conserva referencias a $A$, $B$, $M$, $R$, $E_C$, $C$ y $O$. Cuando cambia una celda, se reactivan únicamente las relaciones que la comparten:
 
 $$\text{cambio} \;\to\; \text{TriGate} \;\to\; \text{cara} \;\to\; (DO, DE, DS) \;\to\; \text{relaciones dependientes}$$
 
-No existe un procesador central que recorra todas las semillas. Una cara superior se activa por los mismos eventos que una cara inferior. C4, C5 y C6 son relaciones ordinarias; sus paquetes forman $HDS$, $HDE$ y $HDO$, cuyos $R$ deciden operación, coherencia y alcance.
+No existe un procesador central que recorra todas las semillas ni un generador privilegiado de señales de control. Una cara superior se activa por los mismos eventos que una cara inferior. C4, C5 y C6 tampoco forman un controlador externo: son relaciones ordinarias cuya posición convierte sus salidas convergentes en orientación, conocimiento candidato, cierre o carry.
+
+$E$ emerge localmente de la lógica de cada relación. $C_{\text{local}}$ puede emerger de la posición de una apertura única. Cuando la información local no basta, las propuestas $E_C$ y $O$ se propagan, se agrupan en $DE$ y $DO$ y vuelven a operarse. La $C$ efectiva de la ventana aparece cuando esas señales alcanzan una orientación compatible. No se impone desde un centro: es un punto de convergencia reproducible de la red.
 
 ### 13.1 Regla de actualización
 
-1. Leer una fotografía estable de las celdas compartidas y del $DO$ vigente.
-2. Aplicar la dirección $C$ y calcular la propuesta correspondiente.
-3. Recalcular el paquete $(R, E_C, O)$ de cada TriGate afectado.
-4. Proyectar los canales superiores $DS$, $DE_C$ y $DO_{t+1}$.
-5. En el transcender, reagrupar las proyecciones de C4, C5 y C6 como $HDS$, $HDE$ y $HDO$, y calcular $RD$, $RC$ y $RO$.
-6. Aplicar la única transición correspondiente: aprender, inferir o deducir; clasificar la coherencia; y mantener la búsqueda local, elevarla a red o detenerla.
+1. Leer una fotografía estable de las celdas compartidas, de $C_t$ y del $DO$ vigente.
+2. Detectar la distribución de aperturas y obtener, cuando sea posible, una candidata $C_{\text{local}}$.
+3. Aplicar $C_t$ —o la candidata local compatible— y calcular la propuesta correspondiente.
+4. Recalcular el paquete $(R, E_C, O)$ de cada TriGate afectado.
+5. Proyectar los canales superiores $DS$, $DE_C$ y $DO_{t+1}$ y propagar solo sus cambios.
+6. Componer las señales recibidas mediante TriGates ordinarios hasta producir $C_{t+1}$, conservar la orientación heredada mientras siga siendo válida o alcanzar un punto fijo abierto.
 7. Publicar un evento solo si el paquete ha cambiado.
 8. Reejecutar las caras dependientes en el intento siguiente.
 
-La regla $\Delta\mathcal{T} = 0 \Rightarrow \text{no emitir evento}$ concentra la actividad en las regiones afectadas. Los TriGates independientes pueden operar en paralelo; las relaciones dependientes avanzan cuando reciben una nueva fotografía coherente.
+La regla $\Delta\mathcal{T} = 0 \Rightarrow \text{no emitir evento}$ concentra la actividad en las regiones afectadas. Los TriGates independientes pueden operar en paralelo; las relaciones dependientes avanzan cuando reciben una nueva fotografía coherente. La unidad de sincronización no es una orden global, sino la versión estable del estado compartido que cada relación consume.
 
 ### 13.2 Histéresis, competencia y confluencia
 
@@ -582,20 +576,16 @@ Cada ventana conserva los estados $DO$ visitados y las candidatas ensayadas. Una
 
 ### 13.3 Condiciones de detención
 
-- $RO = 0$: continuar la deducción en el diccionario local.
-- $RO = 1$: elevar la misma consulta deductiva a la red Aurora.
-- $RO = 2$ y $RC = 1$: detener con cierre coherente y sintetizar.
-- $RO = 2$ y $RC = 2$: detener como ambiguo o no resuelto, conservando carry cuando proceda.
-- $RO = 2$ y $RC = 0$: detener por incoherencia o agotamiento sin solución válida.
-- Ningún paquete cambia: punto fijo local. Su clasificación final depende igualmente de $RC$ y $RO$; la ausencia de eventos no se confunde con coherencia.
+- C5 alcanza `1-1-1` y la salida es congruente: aceptar y sintetizar.
+- Ningún paquete cambia: punto fijo local, que puede ser cerrado o permanecer abierto.
+- La dirección sigue abierta: emitir como carry la evolución completa de $U$ y colocarla como $A$ de la ventana siguiente.
+- $DO$ agota los estados admisibles no visitados: detener, marcar no resuelto y cambiar de fase o ventana.
 
 La secuencia operativa completa queda reducida a una sola pauta autosimilar:
 
-> **ordenar → entrelazar → emerger → proyectar → deducir → reejecutar → reutilizar, aprender o elevar**
+> **ordenar → entrelazar → emerger → proyectar → reejecutar → reutilizar o crear alternativa**
 
-Los datos, el conocimiento, la orientación, el cierre y el control utilizan el mismo vocabulario ternario y la misma composición de caras. La diferencia entre niveles no reside en el operador, sino únicamente en el tipo de unidad que ocupa cada una de las tres posiciones.
-
-Con esta unificación, la arquitectura conceptual queda cerrada. Diccionario, red, especialización y control no añaden operadores nuevos: son funciones y escalas del TriGate. El trabajo pendiente es de ingeniería y validación: completar el núcleo ejecutable, congelar mediante pruebas exhaustivas las tablas ternarias y crear los tensores canónicos de los tokens simples.
+Los datos, el conocimiento, la orientación, el cierre y el control utilizan el mismo vocabulario ternario y la misma composición de caras. La diferencia entre niveles no reside en el operador, sino en la posición relacional y en la escala de la unidad que ocupa cada papel. En Aurora, la información no es gobernada por señales externas: al propagarse, relacionarse y converger, una parte de esa misma información adquiere función de control.
 
 ---
 

@@ -20,7 +20,7 @@ def _triplets(unit: aurora.Unit) -> list[list[int]]:
 def run() -> dict[str, object]:
     children = tuple(aurora.Unit.leaf(value) for value in CHILDREN)
     unit = aurora.synthesize(children, aurora.Direction.LEARN_M)
-    window = fractal_kernel.FractalWindow(TOPOLOGY)
+    window = fractal_kernel.OrientedBoundary(TOPOLOGY)
 
     memory = fractal_kernel.FractalTensorDictionary().remember(unit)
     lookups = tuple(

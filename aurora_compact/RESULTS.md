@@ -1,10 +1,10 @@
-# Resultados de Aurora compacto 0.18.0-rc1
+# Resultados de Aurora compacto 0.18.0-rc2
 
 Auditoría ejecutada el 6 de agosto de 2026.
 
 ## Validación
 
-- 143/143 pruebas unitarias, fractales, secuenciales, deductivas, de red y de
+- 150/150 pruebas unitarias, fractales, secuenciales, deductivas, de red y de
   entrenamiento.
 - 243 configuraciones dirigidas del TriGate.
 - 46.875 caras, 46.875 ventanas y 46.875 controles en total: 15.625 por
@@ -42,8 +42,42 @@ Auditoría ejecutada el 6 de agosto de 2026.
   y la del nivel superior.
 - Raíz `9→3→1` consultada desde sus tres canales y reejecutada con toda su
   procedencia.
+- Ventana canónica comprobada como `(A,B,2)` en cierre, apertura e
+  incoherencia, con un único tensor nuevo consumido por continuación.
+- Prioridad `R=2 → apertura` comprobada incluso cuando `E` conserva el residual
+  `000`, sin producir una contradicción falsa.
 
-## Resultado release candidate 0.18.0-rc1
+## Resultado de la ventana corregida 0.18.0-rc2
+
+Los tres casos canónicos se reprodujeron sobre unidades causales:
+
+```text
+(A,B,2₀) -> 2ₑ coherente   -> superior U(A,B,2ₑ)
+(A,B,2₀) -> 2ₑ ambiguo     -> (2ₑ,siguiente,2₀)
+(A,B,2₀) -> incoherencia   -> superior A + (B,siguiente,2₀)
+```
+
+El tensor `2₀` es una unidad completa `K=(222,222,222)`, no un valor nulo del
+lenguaje anfitrión. Cada nuevo intento crea otra unidad abierta. Su estado
+evolucionado `2ₑ` conserva como descendientes `A`, `B` y `2₀`. Cuando la
+relación cierra, la unidad superior es otra identidad causal: conserva
+`(A,B,2ₑ)` y vuelve a ejecutarse mediante la misma cara.
+
+La continuación abierta y la contradictoria consumen exactamente un tensor
+nuevo. Esto sustituye el prototipo histórico `(carry,siguiente,siguiente)` y
+evita llenar con una entrada determinada el lugar destinado al resultado.
+En ambos casos el `DO` de la unidad retenida se hereda como fase de la ventana
+siguiente, verificando `O[t]→C[t+1]` también durante el desplazamiento.
+
+La auditoría enumera las 625 parejas posibles de las 25 tripletas procesables:
+137 cierran, 464 permanecen abiertas y 24 son incoherentes. Dos de las 24 son
+resultados no ordenables (`012` y `102`) que un voto aislado de `DE` habría
+cerrado incorrectamente.
+Todos los tensores evolucionados reejecutan; las 137 emergencias coherentes también reejecutan; y
+todas las transiciones conservan por identidad la unidad que asciende o
+continúa.
+
+## Resultado histórico release candidate 0.18.0-rc1
 
 Una unidad emergente causal produjo:
 
@@ -425,8 +459,8 @@ imposible `102`: las tres hipótesis permanecieron en la procedencia y el códig
 emergente no se activó.
 
 La regresión 0.14 alcanzó 108 pruebas, 0.15 alcanzó 116, 0.16 alcanzó 125 y
-0.17 alcanzó 133. El candidato 0.18.0-rc1 alcanza 143, conserva `K` completo,
-lo consulta desde sus tres canales y elimina del núcleo canónico las acciones
-de salida y movimiento. La frontera siguiente ya no es descubrir otro tipo de
-operación: es educar y aprender las conexiones tensoriales concretas que
-presentan esa misma operación en cada dominio.
+0.17 alcanzó 133 y 0.18.0-rc1 alcanzó 143. El candidato 0.18.0-rc2 alcanza 151,
+conserva `K` completo, lo consulta desde sus tres canales y hace que la ventana
+repita la relación `(A,B,2)` sin una política de segmentación independiente. La
+frontera siguiente es encadenar esta transición en todos los niveles con
+topologías aprendidas por el propio sistema.

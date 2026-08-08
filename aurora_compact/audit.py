@@ -1,4 +1,4 @@
-"""Reproduce the finite-state and behavioral audit for Aurora 0.18.0-rc1."""
+"""Reproduce the finite-state and behavioral audit for Aurora 0.18.0-rc2."""
 
 from __future__ import annotations
 
@@ -8,9 +8,10 @@ from itertools import product
 
 from aurora_compact import (
     aurora, context_experiment, downward_experiment, education_experiment,
-    experiment, fractal_dictionary_experiment, growth, provenance_experiment,
+    experiment, fractal_dictionary_experiment, fractal_kernel, growth,
+    provenance_experiment,
     orientation_experiment, output_face_experiment, tensor_program_experiment,
-    release_candidate_experiment, training,
+    release_candidate_experiment, training, window_experiment,
 )
 
 
@@ -24,7 +25,7 @@ def audit() -> dict[str, object]:
         p for p in triplets if aurora.order_triplet(p).valid or p == aurora.OPEN
     ]
     report: dict[str, object] = {
-        "profile": "aurora-compact-0.18.0rc1",
+        "profile": "aurora-compact-0.18.0rc2",
         "triplets_total": len(triplets),
         "triplets_processible": len(processible),
         "literal_impossible": [list(p) for p in triplets if p not in processible],
@@ -77,6 +78,66 @@ def audit() -> dict[str, object]:
             "complete_control_tensors": complete_control_tensors,
         }
     report["directions"] = directions
+    tensor_window_states: Counter[str] = Counter()
+    tensor_window_reexecutions = 0
+    tensor_window_emergences = 0
+    tensor_window_emergence_reexecutions = 0
+    non_orderable_positive_rejections = 0
+    tensor_window_transitions = 0
+    for a_value, b_value in product(processible, repeat=2):
+        a, b = aurora.Unit.leaf(a_value), aurora.Unit.leaf(b_value)
+        resolved = fractal_kernel.FractalWindow.open(a, b).deduce()
+        tensor_window_states[resolved.state.value] += 1
+        tensor_window_reexecutions += aurora.reexecute(resolved.evolved)
+        if resolved.state is aurora.RelationState.CLOSED:
+            tensor_window_emergences += 1
+            tensor_window_emergence_reexecutions += aurora.reexecute(
+                resolved.emergent
+            )
+            valid = (
+                resolved.superior is resolved.emergent
+                and resolved.superior is not resolved.evolved
+                and resolved.emergent is not None
+                and resolved.emergent.children == (a, b, resolved.evolved)
+                and aurora.reexecute(resolved.emergent)
+                and resolved.carry is None
+            )
+        elif resolved.state is aurora.RelationState.OPEN:
+            valid = (
+                resolved.superior is None
+                and resolved.emergent is None
+                and resolved.carry is resolved.evolved
+            )
+        else:
+            non_orderable_positive_rejections += (
+                resolved.evolved.value != aurora.OPEN
+                and aurora.majority3(*resolved.evolved.state.de) == 1
+                and not aurora.order_triplet(resolved.evolved.value).valid
+            )
+            valid = (
+                resolved.superior is a
+                and resolved.emergent is None
+                and resolved.carry is b
+            )
+        tensor_window_transitions += valid
+    report["tensor_window_audit"] = {
+        "cases": sum(tensor_window_states.values()),
+        "states": _counts(tensor_window_states),
+        "all_evolved_results_reexecute": (
+            tensor_window_reexecutions == sum(tensor_window_states.values())
+        ),
+        "coherent_emergences": tensor_window_emergences,
+        "all_coherent_emergences_reexecute": (
+            tensor_window_emergence_reexecutions == tensor_window_emergences
+        ),
+        "non_orderable_positive_rejections": (
+            non_orderable_positive_rejections
+        ),
+        "all_transitions_preserve_identity": (
+            tensor_window_transitions == sum(tensor_window_states.values())
+        ),
+        "shape": ["A", "B", "2_0"],
+    }
     context = (0, 0, 0)
     input_unit = aurora.Unit.leaf(context)
     genesis = aurora.transcend(input_unit, aurora.AuroraDictionary())
@@ -206,6 +267,7 @@ def audit() -> dict[str, object]:
     report["parallel_output_face_probe"] = output_face_experiment.run()
     report["fractal_orientation_probe"] = orientation_experiment.run()
     report["release_candidate_probe"] = release_candidate_experiment.run()
+    report["corrected_tensor_window_probe"] = window_experiment.run()
     return report
 
 
