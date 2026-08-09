@@ -192,43 +192,291 @@ Todos pasan a ser respuestas concretas a una misma pregunta:
 
 ---
 
-## 1. El TriGate: vocabulario y relación lógica
+1. El TriGate: vocabulario y relación lógica
 
-Aurora emplea un vocabulario ternario $T = \{0, 1, 2\}$. Los valores `0` y `1` representan determinaciones complementarias; `2` representa apertura, indeterminación o un valor situado fuera del espacio que la relación actual puede cerrar.
+Aurora emplea un vocabulario ternario:
 
-El TriGate es la relación mínima del modelo. Contiene dos operandos $A$ y $B$, un modo lógico $M$ y una celda de resultado $R$. La operación ordinaria calcula una propuesta de resultado mediante la mayoría ternaria:
+[\mathbb{T}={0,1,2}]
 
-$$\hat{R} = \text{Majority}_3(A, B, M)$$
+Los valores (0) y (1) representan determinaciones complementarias. El valor (2) representa apertura, indeterminación o un valor situado fuera del espacio que la relación actual puede cerrar.
 
-La misma relación puede recorrerse en varias direcciones. $C$ no introduce otra operación: expresa qué papel de la relación debe resolverse mientras $A$ actúa como ancla. En la formulación autocontrolada, las variables transformables se ordenan como:
+El TriGate es la relación lógica mínima del modelo. Contiene:
 
-$$X_C = (M, R, B)$$
+(A) y (B): entradas u operandos.
 
-Cuando existe una única apertura entre esos tres papeles, su posición produce una orientación local:
+(M): modo o tipo de puerta lógica.
 
-$$C_{\text{local}} = \text{posición}_2(M, R, B)$$
+(R): resultado de la operación.
 
-| C | Variable transformada | Lectura operacional | Ancla |
-|:---:|---|---|---|
-| 0 | M | Aprendizaje | A, B y R |
-| 1 | R | Inferencia | A, B y M |
-| 2 | B | Deducción | A, M y R |
+Su cálculo directo se expresa como:
 
-Por tanto, aprender, inferir y deducir son tres orientaciones de una misma relación. El TriGate no necesita tres algoritmos: conserva una estructura y cambia la celda que permanece abierta a resolución.
+[R=\operatorname{Majority3}(A,B,M)]
 
-La cantidad y la posición de los valores `2` determinan el estado dinámico del TriGate. Sin aperturas, la relación está determinada y $E$ debe decidir si cierra o contradice. Con una sola apertura entre $(M, R, B)$, su posición ofrece una candidata $C_{\text{local}}$, aunque no garantiza que la solución sea única. Con dos aperturas existen varias orientaciones posibles y el autómata debe esperar contexto o una señal convergente. Con tres aperturas no hay orientación interna preferente.
+1.1. La mayoría como familia ordenada de puertas lógicas
 
-Así, el TriGate no es solo una puerta lógica: es un autómata relacional ternario dirigido por eventos. Su estado puede escribirse como:
+Majority3 no representa una votación estadística. Es una forma compacta de ordenar tres puertas lógicas ternarias mediante (M):
 
-$$q_t = (A, B, M, R, E, C, O)_t$$
+(M)
 
-Una modificación en una celda compartida desencadena una transición local. El autómata intenta resolver el papel abierto, evalúa el nuevo estado y publica únicamente aquello que cambió.
+Puerta seleccionada
 
-El paquete observable del TriGate es:
+Comportamiento
 
-$$\mathcal{T} = (R,\ E_C,\ O)$$
+(0)
 
-$R$ expresa el valor emergente; $E_C$ expresa el estado relacional emergente después de resolver en la orientación $C$; $O$ conserva la posición, el sentido o el siguiente recorrido necesario para continuar. $E$ no se interpreta de forma aislada: depende de $R$, de la relación recorrida y de $C$.
+AND3
+
+Devuelve (1) solo cuando (A=B=1); devuelve (0) cuando existe cierre hacia (0); en otro caso devuelve (2).
+
+(1)
+
+OR3
+
+Devuelve (0) solo cuando (A=B=0); devuelve (1) cuando existe cierre hacia (1); en otro caso devuelve (2).
+
+(2)
+
+UNKNOWN3
+
+Conserva la apertura cuando la relación no permite determinar (0) o (1).
+
+Cuando las dos entradas coinciden, el resultado queda determinado independientemente del modo:
+
+[\operatorname{Majority3}(0,0,M)=0]
+
+[\operatorname{Majority3}(1,1,M)=1]
+
+Cuando (A) y (B) no producen por sí solos una determinación, (M) decide qué puerta permite resolver la relación. Por tanto, la mayoría ternaria puede entenderse como la resolución conjunta y ordenada de AND3, OR3 y UNKNOWN3.
+
+La antimayoría no introduce una lógica diferente. Aplica la negación ternaria al resultado de la puerta seleccionada:
+
+[\neg_3 0=1,\qquad \neg_3 1=0,\qquad \neg_3 2=2]
+
+Por tanto:
+
+\neg_3\operatorname{Majority3}(A,B,M)]
+
+Esto produce la familia complementaria:
+
+[\operatorname{NOTAND3},\quad\operatorname{NOTOR3},\quad\operatorname{NOTUNKNOWN3}]
+
+Los valores cerrados (0) y (1) permutan, mientras que (2) permanece abierto.
+
+1.2. Recorridos de la relación
+
+La misma relación puede recorrerse en distintos sentidos. La dirección (C) no introduce un algoritmo diferente: indica cuál de las variables transformables debe resolverse mientras (A) actúa como ancla.
+
+(C)
+
+Variable transformada
+
+Lectura operacional
+
+Valores conocidos
+
+(0)
+
+(M)
+
+Aprendizaje
+
+(A,B,R)
+
+(1)
+
+(R)
+
+Inferencia
+
+(A,B,M)
+
+(2)
+
+(B)
+
+Deducción
+
+(A,M,R)
+
+Por tanto, aprender, inferir y deducir son tres orientaciones de una misma relación. El TriGate no necesita tres algoritmos: conserva su estructura y cambia la celda que se considera abierta a resolución.
+
+1.3. Salida observable
+
+El paquete observable producido por el TriGate es:
+
+[T=(R,E_C,O)]
+
+donde:
+
+(R) expresa el valor que emerge del cálculo lógico.
+
+(E_C) expresa el estado lógico de la relación después de resolverla en la dirección (C).
+
+(O) conserva la posición, el sentido o el siguiente recorrido necesario para continuar.
+
+La señal (E_C) distingue tres estados:
+
+(E_C)
+
+Estado relacional
+
+(1)
+
+La relación cierra mediante la puerta directa.
+
+(0)
+
+La relación cierra mediante la puerta complementaria.
+
+(2)
+
+La relación permanece abierta.
+
+De este modo, (E) no es una etiqueta añadida desde el exterior. Emerge al reconocer qué familia lógica —mayoría, antimayoría o apertura— explica el resultado del TriGate.
+
+Tampoco se interpreta aisladamente: su significado depende del resultado (R), de la dirección (C) y de la orientación (O).1. El TriGate: vocabulario y relación lógica
+
+Aurora emplea un vocabulario ternario:
+
+[\mathbb{T}={0,1,2}]
+
+Los valores (0) y (1) representan determinaciones complementarias. El valor (2) representa apertura, indeterminación o un valor situado fuera del espacio que la relación actual puede cerrar.
+
+El TriGate es la relación lógica mínima del modelo. Contiene:
+
+(A) y (B): entradas u operandos.
+
+(M): modo o tipo de puerta lógica.
+
+(R): resultado de la operación.
+
+Su cálculo directo se expresa como:
+
+[R=\operatorname{Majority3}(A,B,M)]
+
+1.1. La mayoría como familia ordenada de puertas lógicas
+
+Majority3 no representa una votación estadística. Es una forma compacta de ordenar tres puertas lógicas ternarias mediante (M):
+
+(M)
+
+Puerta seleccionada
+
+Comportamiento
+
+(0)
+
+AND3
+
+Devuelve (1) solo cuando (A=B=1); devuelve (0) cuando existe cierre hacia (0); en otro caso devuelve (2).
+
+(1)
+
+OR3
+
+Devuelve (0) solo cuando (A=B=0); devuelve (1) cuando existe cierre hacia (1); en otro caso devuelve (2).
+
+(2)
+
+UNKNOWN3
+
+Conserva la apertura cuando la relación no permite determinar (0) o (1).
+
+Cuando las dos entradas coinciden, el resultado queda determinado independientemente del modo:
+
+[\operatorname{Majority3}(0,0,M)=0]
+
+[\operatorname{Majority3}(1,1,M)=1]
+
+Cuando (A) y (B) no producen por sí solos una determinación, (M) decide qué puerta permite resolver la relación. Por tanto, la mayoría ternaria puede entenderse como la resolución conjunta y ordenada de AND3, OR3 y UNKNOWN3.
+
+La antimayoría no introduce una lógica diferente. Aplica la negación ternaria al resultado de la puerta seleccionada:
+
+[\neg_3 0=1,\qquad \neg_3 1=0,\qquad \neg_3 2=2]
+
+Por tanto:
+
+\neg_3\operatorname{Majority3}(A,B,M)]
+
+Esto produce la familia complementaria:
+
+[\operatorname{NOTAND3},\quad\operatorname{NOTOR3},\quad\operatorname{NOTUNKNOWN3}]
+
+Los valores cerrados (0) y (1) permutan, mientras que (2) permanece abierto.
+
+1.2. Recorridos de la relación
+
+La misma relación puede recorrerse en distintos sentidos. La dirección (C) no introduce un algoritmo diferente: indica cuál de las variables transformables debe resolverse mientras (A) actúa como ancla.
+
+(C)
+
+Variable transformada
+
+Lectura operacional
+
+Valores conocidos
+
+(0)
+
+(M)
+
+Aprendizaje
+
+(A,B,R)
+
+(1)
+
+(R)
+
+Inferencia
+
+(A,B,M)
+
+(2)
+
+(B)
+
+Deducción
+
+(A,M,R)
+
+Por tanto, aprender, inferir y deducir son tres orientaciones de una misma relación. El TriGate no necesita tres algoritmos: conserva su estructura y cambia la celda que se considera abierta a resolución.
+
+1.3. Salida observable
+
+El paquete observable producido por el TriGate es:
+
+[T=(R,E_C,O)]
+
+donde:
+
+(R) expresa el valor que emerge del cálculo lógico.
+
+(E_C) expresa el estado lógico de la relación después de resolverla en la dirección (C).
+
+(O) conserva la posición, el sentido o el siguiente recorrido necesario para continuar.
+
+La señal (E_C) distingue tres estados:
+
+(E_C)
+
+Estado relacional
+
+(1)
+
+La relación cierra mediante la puerta directa.
+
+(0)
+
+La relación cierra mediante la puerta complementaria.
+
+(2)
+
+La relación permanece abierta.
+
+De este modo, (E) no es una etiqueta añadida desde el exterior. Emerge al reconocer qué familia lógica —mayoría, antimayoría o apertura— explica el resultado del TriGate.
+
+Tampoco se interpreta aisladamente: su significado depende del resultado (R), de la dirección (C) y de la orientación (O).
 
 ---
 
